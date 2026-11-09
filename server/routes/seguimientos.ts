@@ -40,7 +40,7 @@ function insertFotos(seguimientoId: number, fotos: { buffer: Buffer; mime: strin
 router.get('/:lesionId/seguimientos', (req, res) => {
   const { lesionId } = req.params;
   const rows = all(
-    'SELECT id, lesion_id, fecha, cambios, color, sintomas, notas FROM seguimientos WHERE lesion_id = ? ORDER BY fecha DESC',
+    'SELECT id, lesion_id, fecha, cambios, color, sintomas, tamano_mm, notas FROM seguimientos WHERE lesion_id = ? ORDER BY fecha DESC',
     [lesionId]
   );
   if (rows.length === 0) return res.json([]);
@@ -67,7 +67,7 @@ router.get('/:lesionId/seguimientos', (req, res) => {
 // POST /api/lesiones/:lesionId/seguimientos — crear seguimiento con una o varias fotos
 router.post('/:lesionId/seguimientos', (req, res) => {
   const { lesionId } = req.params;
-  const { fecha, cambios, color, sintomas, notas, foto, fotos } = req.body;
+  const { fecha, cambios, color, sintomas, tamano_mm, notas, foto, fotos } = req.body;
 
   if (!cambios || !color || !sintomas) {
     return res.status(400).json({ error: 'cambios, color y sintomas son requeridos' });
@@ -81,10 +81,12 @@ router.post('/:lesionId/seguimientos', (req, res) => {
   const db = getDb();
   const ids: number[] = [];
   const tx = db.transaction(() => {
+    const tamano = tamano_mm !== undefined && tamano_mm !== null && tamano_mm !== ''
+      ? Number(tamano_mm) : null;
     const result = run(
-      `INSERT INTO seguimientos (lesion_id, fecha, cambios, color, sintomas, notas, foto)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [lesionId, fecha || new Date().toISOString(), cambios, color, sintomas, notas || null, decoded[0].buffer]
+      `INSERT INTO seguimientos (lesion_id, fecha, cambios, color, sintomas, tamano_mm, notas, foto)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [lesionId, fecha || new Date().toISOString(), cambios, color, sintomas, Number.isFinite(tamano) ? tamano : null, notas || null, decoded[0].buffer]
     );
     const seguimientoId = result.lastInsertRowid as number;
     ids.push(...insertFotos(seguimientoId, decoded));

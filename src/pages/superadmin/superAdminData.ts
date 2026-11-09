@@ -168,7 +168,7 @@ export const INITIAL_TENANTS: TenantOrganization[] = [
 export const INITIAL_AI_MODELS: AIModelTelemetry[] = [
   {
     modelId: 'MDL-SEG-01',
-    name: 'SkinNor U-Net MaskLesion',
+    name: 'Skinnor U-Net MaskLesion',
     version: 'v2.4.2-prod',
     status: 'Producción',
     framework: 'PyTorch / TensorRT',
@@ -270,7 +270,7 @@ export const INITIAL_GLOBAL_AUDIT_LOGS: GlobalAuditLog[] = [
   {
     id: 'LOG-9480',
     timestamp: '16 Ago 2026 13:40:05',
-    tenantName: 'SkinNor Global SaaS HQ',
+    tenantName: 'Skinnor Global SaaS HQ',
     userName: 'Ing. Carlos Mendoza',
     userRole: 'Super Admin',
     action: 'PROVISION_TENANT',

@@ -47,6 +47,14 @@ function siNo(v: string): string {
   return v === 'si' ? 'Sí' : v === 'no' ? 'No' : v;
 }
 
+/** Normaliza el tamaño de lesión a "~6 mm" sin duplicar la unidad. */
+function fmtTamano(tamano?: string | null): string {
+  const t = (tamano || '').trim();
+  if (!t) return 'N/A';
+  const num = t.replace(/mm\s*$/i, '').trim();
+  return num ? `${num} mm` : 'N/A';
+}
+
 /**
  * Convierte lesiones + seguimientos reales del paciente en capturas
  * con la forma RegistroFoto que consume GaleriaImagenes4Col.
@@ -74,11 +82,11 @@ export function buildCapturasFromPatient(
       fullDate: baseFecha.fullDate,
       isoDate: lesion.creado_en,
       tipo: 'Foto inicial de lesión',
-      aumento: 'Registro base',
+      aumento: '',
       lesion: lesion.nombre,
       ubicacion,
-      diametro: lesion.tamaño ? `${lesion.tamaño} mm` : 'N/A',
-      area: 'N/A',
+      diametro: fmtTamano(lesion.tamaño),
+      area: '',
       scoreTDS: 'N/A',
       asimetria: 'N/A',
       bordes: 'N/A',
@@ -86,7 +94,7 @@ export function buildCapturasFromPatient(
       estado: 'Registro inicial',
       estadoColor: 'bg-slate-100 text-slate-800 border-slate-200',
       autor: 'Paciente',
-      calidad: '—',
+      calidad: '',
       dispositivo: 'App Skinnor',
       roi: '—',
       colorTonos: '—',
@@ -113,11 +121,11 @@ export function buildCapturasFromPatient(
           fullDate: fFecha.fullDate,
           isoDate: seg.fecha,
           tipo: 'Registro de seguimiento',
-          aumento: 'Foto de control',
+          aumento: '',
           lesion: lesion.nombre,
           ubicacion,
-          diametro: lesion.tamaño ? `${lesion.tamaño} mm` : 'N/A',
-          area: 'N/A',
+          diametro: fmtTamano(lesion.tamaño),
+          area: '',
           scoreTDS: 'N/A',
           asimetria: 'N/A',
           bordes: 'N/A',
@@ -127,7 +135,7 @@ export function buildCapturasFromPatient(
             ? 'bg-amber-50 text-amber-800 border-amber-200'
             : 'bg-emerald-50 text-emerald-800 border-emerald-200',
           autor: 'Paciente',
-          calidad: '—',
+          calidad: '',
           dispositivo: 'App Skinnor',
           roi: '—',
           colorTonos: respuestas,

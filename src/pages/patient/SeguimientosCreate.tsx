@@ -25,6 +25,7 @@ export default function SeguimientosCreate() {
   const [cambios, setCambios] = useState<'si' | 'no'>('no');
   const [color, setColor] = useState<'si' | 'no'>('no');
   const [sintomas, setSintomas] = useState<'si' | 'no'>('no');
+  const [tamanoMm, setTamanoMm] = useState<string>('');
   const [notas, setNotas] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -74,6 +75,7 @@ export default function SeguimientosCreate() {
         cambios,
         color,
         sintomas,
+        tamano_mm: tamanoMm.trim() !== '' ? Number(tamanoMm) : null,
         notas,
         fotos,
       });
@@ -262,6 +264,26 @@ export default function SeguimientosCreate() {
                     </label>
                   </div>
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-[#0c1512]">Diámetro estimado (opcional)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    inputMode="decimal"
+                    value={tamanoMm}
+                    onChange={(e) => setTamanoMm(e.target.value)}
+                    placeholder="Ej: 6.5"
+                    className="w-32 h-10 rounded-md border border-[#d8e0dc] bg-[#f4f6f5] px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#0c1512]"
+                  />
+                  <span className="text-sm text-[#5f7b6f]">mm de diámetro mayor</span>
+                </div>
+                <p className="text-[11px] text-[#5f7b6f]">
+                  Mide con la misma referencia de la foto anterior (moneda o regla). Permite seguir el crecimiento en el tiempo.
+                </p>
               </div>
 
               <div className="space-y-2 mt-6">

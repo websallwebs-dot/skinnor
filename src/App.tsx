@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './AuthContext';
+import { AuthProvider, useAuth, type UserRole } from './AuthContext';
 import { Toaster } from 'sonner';
 import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
@@ -19,13 +19,23 @@ import {
 } from './dashboards';
 
 // Componente para proteger las rutas
-function ProtectedRoute({ children }: { children: ReactNode }) {
+const ROLE_HOME: Record<UserRole, string> = {
+  patient: '/dashboard',
+  professional: '/pro',
+  clinic_admin: '/clinic',
+  super_admin: '/admin',
+};
+
+function ProtectedRoute({ children, roles }: { children: ReactNode; roles?: UserRole[] }) {
   const { user } = useAuth();
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+  if (roles && !roles.includes(user.rol)) {
+    return <Navigate to={ROLE_HOME[user.rol] || '/login'} replace />;
+  }
+
   return <>{children}</>;
 }
 
@@ -41,7 +51,7 @@ export default function App() {
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['patient']}>
                 <PatientLayout />
               </ProtectedRoute>
             } 
@@ -60,7 +70,7 @@ export default function App() {
           <Route 
             path="/pro" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['professional']}>
                 <ProfessionalLayout />
               </ProtectedRoute>
             } 
@@ -86,7 +96,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['super_admin']}>
                 <SuperAdminLayout />
               </ProtectedRoute>
             }
@@ -103,7 +113,7 @@ export default function App() {
           <Route
             path="/clinic"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['clinic_admin']}>
                 <ClinicAdminLayout />
               </ProtectedRoute>
             }

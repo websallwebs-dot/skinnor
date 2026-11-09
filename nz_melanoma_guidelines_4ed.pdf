@@ -1,0 +1,84 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="/style.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+  *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+  }
+  body{
+    background-color:#24292C;
+    font-family: 'Montserrat', sans-serif;
+    font-weight:400;
+  }
+
+  .errordocument{
+    text-align:center;
+    margin-top: 5vh;
+  }
+  .logo{
+    max-width: 300px;
+    margin-bottom: 20px;
+  }
+
+  .box{
+    background-color:#fff;
+    padding: 50px;
+    width: 90%;
+    max-width: 550px;
+    margin: 0 auto 20px auto;
+    border-radius: 3px;
+  }
+
+  .box a{
+    display: block;
+    background-color:#24292C;
+    color:#fff;
+    padding: 10px;
+    margin-top: 30px;
+    transition:.3s background-color;
+    text-decoration:none;
+  }
+  .box a:hover{
+    background-color: #333;
+    transition:.3s background-color;
+  }
+
+  h2{
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 45px;
+    margin-bottom: 30px;
+  }
+
+  </style>
+
+  <title>404: Page not found</title>
+
+</head>
+
+<body>
+
+
+<div class='errordocument'>
+  <p><img src='/images/logo.svg' alt="Skin Cancer NZ" class="logo"></p>
+  <div class='box'>
+    <h2>404: Page not found</h2>
+    <p>Sorry, the page you're looking for was not found in this location.</p>
+    <p><a href='/'>Click here to return to the home page</a></p>
+  </div>
+
+
+</div>
+
+
+
+</body>
+</html>

@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS seguimientos (
   cambios TEXT NOT NULL CHECK (cambios IN ('si','no')),
   color TEXT NOT NULL CHECK (color IN ('si','no')),
   sintomas TEXT NOT NULL CHECK (sintomas IN ('si','no')),
+  tamano_mm REAL,
   notas TEXT,
   foto BLOB NOT NULL,
   FOREIGN KEY (lesion_id) REFERENCES lesiones(id) ON DELETE CASCADE
@@ -98,6 +99,23 @@ CREATE TABLE IF NOT EXISTS seguimiento_fotos (
   mime TEXT NOT NULL DEFAULT 'image/jpeg',
   orden INTEGER NOT NULL DEFAULT 0,
   creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (seguimiento_id) REFERENCES seguimientos(id) ON DELETE CASCADE
+);
+
+-- -------------------------------------------------
+-- Analisis de imagen por seguimiento (registro + metricas ABCD)
+-- -------------------------------------------------
+CREATE TABLE IF NOT EXISTS lesion_analisis (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  lesion_id INTEGER NOT NULL,
+  seguimiento_id INTEGER NOT NULL,
+  fuente TEXT,
+  metricas TEXT NOT NULL,
+  heatmap BLOB,
+  viz BLOB,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(lesion_id, seguimiento_id),
+  FOREIGN KEY (lesion_id) REFERENCES lesiones(id) ON DELETE CASCADE,
   FOREIGN KEY (seguimiento_id) REFERENCES seguimientos(id) ON DELETE CASCADE
 );
 
@@ -411,3 +429,34 @@ CREATE TABLE IF NOT EXISTS profesional_config (
   actualizado_en TEXT NOT NULL DEFAULT (datetime('now')),
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+-- -------------------------------------------------
+-- Datasets clínicos anonimizados (profesional)
+-- -------------------------------------------------
+CREATE TABLE IF NOT EXISTS datasets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  profesional_id INTEGER NOT NULL,
+  nombre TEXT NOT NULL,
+  descripcion TEXT,
+  etiqueta TEXT,
+  criterios TEXT,
+  incluir_imagenes INTEGER NOT NULL DEFAULT 1,
+  registros_count INTEGER NOT NULL DEFAULT 0,
+  pacientes_count INTEGER NOT NULL DEFAULT 0,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (profesional_id) REFERENCES usuarios(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS dataset_registros (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  dataset_id INTEGER NOT NULL,
+  record_id TEXT NOT NULL,
+  tipo TEXT NOT NULL,
+  lesion_id INTEGER,
+  seguimiento_id INTEGER,
+  foto_id INTEGER,
+  metadata TEXT,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_dataset_registros_dataset ON dataset_registros(dataset_id);

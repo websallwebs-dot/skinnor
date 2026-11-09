@@ -366,8 +366,12 @@ export default function HistorialRegistros({
                         </div>
                         <div className="text-xs space-y-1 flex-1 min-w-0">
                           <div className="text-slate-500 text-[11px] truncate">{f.tipo} • {f.ubicacion}</div>
-                          <div className="text-slate-900 font-semibold tabular-nums">{f.diametro}</div>
-                          <div className="text-[11px] text-slate-500 truncate">{f.colorTonos}</div>
+                          {f.diametro !== 'N/A' && (
+                            <div className="text-slate-900 font-semibold tabular-nums">{f.diametro}</div>
+                          )}
+                          {f.colorTonos !== '—' && (
+                            <div className="text-[11px] text-slate-500 truncate">{f.colorTonos}</div>
+                          )}
                         </div>
                         <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-slate-800 shrink-0">
                           <ZoomIn className="h-4 w-4 text-emerald-600" />
@@ -421,7 +425,9 @@ export default function HistorialRegistros({
               </div>
               <div className="px-3 pt-2.5 pb-2 flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-900 truncate max-w-[150px]">{foto.lesion}</span>
-                <span className="text-xs font-semibold text-slate-900 tabular-nums">{foto.diametro}</span>
+                {foto.diametro !== 'N/A' && (
+                  <span className="text-xs font-semibold text-slate-900 tabular-nums">{foto.diametro}</span>
+                )}
               </div>
               <div className="relative aspect-square w-full bg-[#110d0a] overflow-hidden">
                 <CaptureImg foto={foto} />
@@ -590,13 +596,15 @@ export default function HistorialRegistros({
                           {comp.tag} • {comp.fecha}
                         </div>
                         <div className="absolute bottom-2 left-2 right-2 flex justify-between text-xs text-white bg-slate-950/85 px-2.5 py-1 rounded-md font-medium">
-                          <span>{comp.diametro}</span>
+                          <span>{comp.diametro !== 'N/A' ? comp.diametro : comp.tag}</span>
                           <span className={comp.estado === 'Cambios reportados' ? 'text-amber-300' : ''}>{comp.estado}</span>
                         </div>
                       </div>
                       <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-100 leading-relaxed line-clamp-3">
                         {comp.hallazgos}
-                        <span className="block mt-1 text-slate-400">{comp.colorTonos}</span>
+                        {comp.colorTonos !== '—' && (
+                          <span className="block mt-1 text-slate-400">{comp.colorTonos}</span>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -666,7 +674,7 @@ export default function HistorialRegistros({
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                     <span className="text-slate-500 block text-[10px] uppercase font-semibold">Diámetro</span>
-                    <span className="text-sm font-bold text-slate-900 tabular-nums">{activeModalFoto.diametro}</span>
+                    <span className="text-sm font-bold text-slate-900 tabular-nums">{activeModalFoto.diametro !== 'N/A' ? activeModalFoto.diametro : '—'}</span>
                   </div>
                   <div className="p-2.5 rounded-lg border border-slate-200 bg-white">
                     <span className="text-slate-500 block text-[10px] uppercase font-semibold">Origen</span>

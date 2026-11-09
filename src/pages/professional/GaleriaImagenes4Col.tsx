@@ -486,11 +486,19 @@ export default function GaleriaImagenes4Col({
                 <span className="text-xs font-semibold text-slate-900 truncate max-w-[130px]">
                   {foto.lesion}
                 </span>
-                <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                  <span className="font-semibold text-slate-900 tabular-nums">{foto.diametro}</span>
-                  <span className="text-slate-300">•</span>
-                  <span className="text-slate-600 tabular-nums">{foto.area}</span>
-                </div>
+                {(foto.diametro !== 'N/A' || (foto.area && foto.area !== 'N/A')) && (
+                  <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                    {foto.diametro !== 'N/A' && (
+                      <span className="font-semibold text-slate-900 tabular-nums">{foto.diametro}</span>
+                    )}
+                    {foto.diametro !== 'N/A' && foto.area && foto.area !== 'N/A' && (
+                      <span className="text-slate-300">•</span>
+                    )}
+                    {foto.area && foto.area !== 'N/A' && (
+                      <span className="text-slate-600 tabular-nums">{foto.area}</span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* High-Fidelity Dermatoscopy Image Canvas Container */}
@@ -510,7 +518,7 @@ export default function GaleriaImagenes4Col({
                     <ZoomIn className="h-3.5 w-3.5 mr-1 text-emerald-600" /> Inspeccionar 10x
                   </Button>
                   <span className="text-xs bg-slate-900/90 px-2.5 py-1 rounded-md text-white border border-white/10 font-medium">
-                    {foto.scoreTDS !== 'N/A' ? `Score TDS: ${foto.scoreTDS}` : 'Topografía'}
+                    {foto.scoreTDS !== 'N/A' ? `Score TDS: ${foto.scoreTDS}` : (isReal ? foto.tipo : 'Topografía')}
                   </span>
                 </div>
               </div>
@@ -518,19 +526,27 @@ export default function GaleriaImagenes4Col({
               {/* Bottom info section */}
               <div className="p-3 bg-white space-y-1.5 border-t border-slate-100 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 truncate max-w-[130px] font-medium">{foto.tipo}</span>
-                  <span className={`font-semibold ${
-                    foto.scoreTDS !== 'N/A' && parseFloat(foto.scoreTDS) > 5.45 
-                      ? 'text-rose-600 font-bold' 
-                      : 'text-slate-800'
-                  }`}>
-                    {foto.scoreTDS !== 'N/A' ? `TDS ${foto.scoreTDS}` : '1x Macro'}
-                  </span>
+                  <span className="text-slate-500 truncate max-w-[140px] font-medium">{foto.tipo}</span>
+                  {!isReal && (
+                    <span className={`font-semibold ${
+                      foto.scoreTDS !== 'N/A' && parseFloat(foto.scoreTDS) > 5.45
+                        ? 'text-rose-600 font-bold'
+                        : 'text-slate-800'
+                    }`}>
+                      {foto.scoreTDS !== 'N/A' ? `TDS ${foto.scoreTDS}` : '1x Macro'}
+                    </span>
+                  )}
                 </div>
-                <div className="text-[11px] text-slate-500 truncate flex items-center justify-between pt-0.5">
-                  <span className="truncate max-w-[140px]">{foto.dispositivo.split('+')[0]}</span>
-                  <span className="text-emerald-700 font-medium">{foto.calidad.split(' ')[0]}</span>
-                </div>
+                {isReal ? (
+                  <div className="text-[11px] text-slate-500 truncate pt-0.5">
+                    {foto.ubicacion}
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-slate-500 truncate flex items-center justify-between pt-0.5">
+                    <span className="truncate max-w-[140px]">{foto.dispositivo.split('+')[0]}</span>
+                    <span className="text-emerald-700 font-medium">{foto.calidad.split(' ')[0]}</span>
+                  </div>
+                )}
               </div>
             </Card>
           ))}
@@ -600,10 +616,25 @@ export default function GaleriaImagenes4Col({
                     zoom={1}
                   />
                   <div className="absolute bottom-2 left-2 bg-slate-950/85 text-white text-xs px-2.5 py-1 rounded-md font-medium">
-                    {compLeft.fecha} • Ø {compLeft.diametro}
+                    {compLeft.fecha}{compLeft.diametro !== 'N/A' ? ` • ${compLeft.diametro}` : ''}
                   </div>
                 </div>
 
+                {isReal ? (
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    {([
+                      ['Lesión', compLeft.lesion],
+                      ['Ubicación', compLeft.ubicacion],
+                      ['Diámetro', compLeft.diametro !== 'N/A' ? compLeft.diametro : '—'],
+                      ['Estado', compLeft.estado],
+                    ] as const).map(([k, v]) => (
+                      <div key={k} className="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block font-semibold">{k.toUpperCase()}</span>
+                        <span className="font-semibold text-slate-900">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 bg-white rounded-lg border border-slate-200">
                     <span className="text-slate-500 text-[10px] block font-semibold">TDS SCORE</span>
@@ -622,6 +653,7 @@ export default function GaleriaImagenes4Col({
                     <span className="font-semibold text-slate-900 tabular-nums">{compLeft.bordes}</span>
                   </div>
                 </div>
+                )}
               </div>
 
               {/* Right Capture */}
@@ -656,10 +688,25 @@ export default function GaleriaImagenes4Col({
                     zoom={1}
                   />
                   <div className="absolute bottom-2 left-2 bg-slate-950/85 text-white text-xs px-2.5 py-1 rounded-md font-medium">
-                    {compRight.fecha} • Ø {compRight.diametro}
+                    {compRight.fecha}{compRight.diametro !== 'N/A' ? ` • ${compRight.diametro}` : ''}
                   </div>
                 </div>
 
+                {isReal ? (
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    {([
+                      ['Lesión', compRight.lesion],
+                      ['Ubicación', compRight.ubicacion],
+                      ['Diámetro', compRight.diametro !== 'N/A' ? compRight.diametro : '—'],
+                      ['Estado', compRight.estado],
+                    ] as const).map(([k, v]) => (
+                      <div key={k} className="p-2.5 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block font-semibold">{k.toUpperCase()}</span>
+                        <span className="font-semibold text-slate-900">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 bg-white rounded-lg border border-slate-200">
                     <span className="text-slate-500 text-[10px] block font-semibold">TDS SCORE</span>
@@ -682,6 +729,7 @@ export default function GaleriaImagenes4Col({
                     <span className="font-semibold text-slate-900 tabular-nums">{compRight.bordes}</span>
                   </div>
                 </div>
+                )}
               </div>
             </div>
 
@@ -957,13 +1005,24 @@ export default function GaleriaImagenes4Col({
                         </div>
                         <div className="text-xs space-y-1 flex-1 min-w-0">
                           <div className="text-slate-500 text-[11px] truncate">{f.tipo}</div>
-                          <div className="text-slate-900 font-semibold tabular-nums">
-                            Ø {f.diametro} • <span className="text-slate-600 font-normal">{f.area}</span>
-                          </div>
-                          <div className="text-[11px] text-slate-500 truncate flex items-center justify-between">
-                            <span>TDS: <strong className="text-slate-800">{f.scoreTDS}</strong></span>
-                            <span className="text-emerald-700 font-medium">{f.calidad.split(' ')[0]}</span>
-                          </div>
+                          {isReal ? (
+                            <>
+                              {f.diametro !== 'N/A' && (
+                                <div className="text-slate-900 font-semibold tabular-nums">{f.diametro}</div>
+                              )}
+                              <div className="text-[11px] text-slate-500 truncate">{f.ubicacion}</div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="text-slate-900 font-semibold tabular-nums">
+                                Ø {f.diametro} • <span className="text-slate-600 font-normal">{f.area}</span>
+                              </div>
+                              <div className="text-[11px] text-slate-500 truncate flex items-center justify-between">
+                                <span>TDS: <strong className="text-slate-800">{f.scoreTDS}</strong></span>
+                                <span className="text-emerald-700 font-medium">{f.calidad.split(' ')[0]}</span>
+                              </div>
+                            </>
+                          )}
                         </div>
                         <Button size="icon" variant="ghost" className="h-8 w-8 text-slate-400 hover:text-slate-800 shrink-0">
                           <ZoomIn className="h-4 w-4 text-emerald-600" />
@@ -1007,7 +1066,7 @@ export default function GaleriaImagenes4Col({
                     Inspección Microscópica #{selectedFoto.id} — {selectedFoto.fecha}
                   </h3>
                   <p className="text-xs text-slate-500">
-                    {selectedFoto.tipo} • {selectedFoto.aumento} • {selectedFoto.ubicacion}
+                    {[selectedFoto.tipo, selectedFoto.aumento, selectedFoto.ubicacion].filter(Boolean).join(' • ')}
                   </p>
                 </div>
               </div>
@@ -1041,9 +1100,13 @@ export default function GaleriaImagenes4Col({
                     {(modalZoom * 10).toFixed(0)}x Magnificación
                   </div>
 
-                  <div className="absolute bottom-3 left-3 bg-slate-950/85 text-white text-xs px-3 py-1 rounded-md border border-white/20 font-medium">
-                    Ø {selectedFoto.diametro} • {selectedFoto.area}
-                  </div>
+                  {(selectedFoto.diametro !== 'N/A' || (selectedFoto.area && selectedFoto.area !== 'N/A')) && (
+                    <div className="absolute bottom-3 left-3 bg-slate-950/85 text-white text-xs px-3 py-1 rounded-md border border-white/20 font-medium">
+                      {selectedFoto.diametro !== 'N/A' && `Ø ${selectedFoto.diametro}`}
+                      {selectedFoto.diametro !== 'N/A' && selectedFoto.area && selectedFoto.area !== 'N/A' && ' • '}
+                      {selectedFoto.area && selectedFoto.area !== 'N/A' && selectedFoto.area}
+                    </div>
+                  )}
                 </div>
 
                 {/* Live Optical & Filter Controls inside Modal */}
@@ -1133,7 +1196,24 @@ export default function GaleriaImagenes4Col({
                   </p>
                 </div>
 
-                {/* TDS & ABCD Score Card */}
+                {/* TDS & ABCD Score Card (solo datos demo) / Datos del registro (datos reales) */}
+                {isReal ? (
+                  <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-2.5 text-xs">
+                    <span className="font-semibold text-slate-800 block">Datos del registro</span>
+                    {[
+                      ['Lesión', selectedFoto.lesion],
+                      ['Ubicación', selectedFoto.ubicacion],
+                      ['Diámetro', selectedFoto.diametro !== 'N/A' ? selectedFoto.diametro : null],
+                      ['Estado', selectedFoto.estado],
+                      ['Respuestas', selectedFoto.colorTonos !== '—' ? selectedFoto.colorTonos : null],
+                    ].filter(([, v]) => v).map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-3 py-0.5 border-b border-slate-100 last:border-0">
+                        <span className="text-slate-500">{k}:</span>
+                        <span className="font-medium text-slate-800 text-right">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
                 <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/70 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-slate-800">Stolz TDS Score</span>
@@ -1161,16 +1241,21 @@ export default function GaleriaImagenes4Col({
                     </div>
                   </div>
                 </div>
+                )}
 
                 {/* Microscopic Findings Text */}
                 <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-xs space-y-1.5">
-                  <span className="font-semibold text-slate-900 block">Hallazgos Dermatoscópicos:</span>
+                  <span className="font-semibold text-slate-900 block">
+                    {isReal ? 'Notas del paciente:' : 'Hallazgos Dermatoscópicos:'}
+                  </span>
                   <p className="text-slate-600 leading-relaxed">
                     {selectedFoto.hallazgos}
                   </p>
-                  <div className="pt-1 text-[11px] text-slate-500 font-medium">
-                    Tonos: {selectedFoto.colorTonos}
-                  </div>
+                  {!isReal && selectedFoto.colorTonos !== '—' && (
+                    <div className="pt-1 text-[11px] text-slate-500 font-medium">
+                      Tonos: {selectedFoto.colorTonos}
+                    </div>
+                  )}
                 </div>
 
                 {/* Equipment & Capture Info */}
@@ -1183,10 +1268,12 @@ export default function GaleriaImagenes4Col({
                     <span className="text-slate-500">Operador:</span>
                     <span className="font-medium text-slate-800">{selectedFoto.autor}</span>
                   </div>
-                  <div className="flex justify-between py-0.5">
-                    <span className="text-slate-500">Calidad Óptica / ROI:</span>
-                    <span className="font-medium text-emerald-700">{selectedFoto.calidad}</span>
-                  </div>
+                  {selectedFoto.calidad && selectedFoto.calidad !== '—' && (
+                    <div className="flex justify-between py-0.5">
+                      <span className="text-slate-500">Calidad Óptica / ROI:</span>
+                      <span className="font-medium text-emerald-700">{selectedFoto.calidad}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2">

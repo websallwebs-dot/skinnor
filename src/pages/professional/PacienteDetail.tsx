@@ -1,21 +1,22 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { get, API_BASE } from '@/lib/api';
+import { get, post, getUser, API_BASE } from '@/lib/api';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import AbcdeTremorAnalytics from './AbcdeTremorAnalytics';
 import GaleriaImagenes4Col from './GaleriaImagenes4Col';
 import { buildCapturasFromPatient } from './pacienteCapturas';
+import { buildLesionEvolucion } from '@/lib/evolucion';
+import EvolucionPanel from '@/components/EvolucionPanel';
 import HistorialRegistros from './HistorialRegistros';
 import LaboratorioIA from './LaboratorioIA';
 import { 
-  ChevronLeft, 
-  Mail, 
-  Calendar, 
-  Eye, 
+  ChevronLeft,
+  Mail,
+  Send,
+  Eye,
   FileText, 
   FileClock,
   FlaskConical, 
@@ -67,6 +68,7 @@ interface SeguimientoReal {
   cambios: 'si' | 'no';
   color: 'si' | 'no';
   sintomas: 'si' | 'no';
+  tamano_mm?: number | null;
   notas?: string;
   fotos?: { id: number; orden: number }[];
   foto_count?: number;
@@ -77,6 +79,7 @@ interface ConsultaReal {
   tema: string;
   estado: string;
   creado_en: string;
+  profesional_id?: number;
   profesional_nombre?: string;
 }
 
@@ -181,6 +184,9 @@ export default function PacienteDetail() {
   const [includeDigitalSignature, setIncludeDigitalSignature] = useState<boolean>(true);
   
   const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
+  const [msgOpen, setMsgOpen] = useState<boolean>(false);
+  const [msgText, setMsgText] = useState<string>('');
+  const [msgSending, setMsgSending] = useState<boolean>(false);
   const [reportGenerated, setReportGenerated] = useState<boolean>(false);
   const [isEditingReport, setIsEditingReport] = useState<boolean>(false);
   const [copiedReport, setCopiedReport] = useState<boolean>(false);
@@ -285,6 +291,42 @@ RNPI: 849201 • Centro Dermatológico San Cristóbal`;
     }, 2000);
   };
 
+  const handleEnviarMensaje = async () => {
+    const contenido = msgText.trim();
+    if (!contenido || !paciente) return;
+    const user = getUser();
+    if (!user?.id) {
+      toast.error('Sesión no válida');
+      return;
+    }
+    setMsgSending(true);
+    try {
+      let hilo = consultas.find((c) => c.profesional_id === user.id);
+      if (!hilo) {
+        const nueva = await post('/consultas', {
+          paciente_id: paciente.id,
+          profesional_id: user.id,
+          tema: 'Consulta de seguimiento',
+        });
+        hilo = { id: nueva.id } as ConsultaReal;
+      }
+      await post(`/consultas/${hilo.id}/mensajes`, {
+        remitente_id: user.id,
+        remitente_tipo: 'profesional',
+        contenido,
+      });
+      toast.success('Mensaje enviado al paciente');
+      setMsgText('');
+      setMsgOpen(false);
+      const consData = await get('/consultas', { paciente_id: String(paciente.id) });
+      setConsultas(consData || []);
+    } catch (err: any) {
+      toast.error(err?.message || 'No se pudo enviar el mensaje');
+    } finally {
+      setMsgSending(false);
+    }
+  };
+
   const handleCopyReport = () => {
     navigator.clipboard.writeText(reportContent);
     setCopiedReport(true);
@@ -327,11 +369,12 @@ RNPI: 849201 • Centro Dermatológico San Cristóbal`;
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="border-[#d8e0dc] shadow-none text-[#0c1512]">
+            <Button
+              variant="outline"
+              className="border-[#d8e0dc] shadow-none text-[#0c1512]"
+              onClick={() => setMsgOpen(true)}
+            >
               <Mail className="mr-2 h-4 w-4" /> Enviar Mensaje
-            </Button>
-            <Button className="bg-[#0c1512] hover:bg-[#3f4f49] text-white shadow-none">
-              <Calendar className="mr-2 h-4 w-4" /> Agendar Consulta
             </Button>
           </div>
         </div>
@@ -706,9 +749,11 @@ RNPI: 849201 • Centro Dermatológico San Cristóbal`;
         />
       )}
       
-      {/* Tab 2: Métricas ABCDE (Tremor Analytics) */}
+      {/* Tab 2: Evolución clínica y ABCDE (datos reales) */}
       {activeTab === 'metricas' && (
-        <AbcdeTremorAnalytics onTransferToReport={() => setActiveTab('informe')} />
+        <EvolucionPanel
+          evoluciones={lesiones.map((l) => buildLesionEvolucion(l, seguimientosPorLesion[l.id] || []))}
+        />
       )}
       
       {/* Tab 3: Laboratorio IA */}
@@ -1081,6 +1126,51 @@ RNPI: 849201 • Centro Dermatológico San Cristóbal`;
                 </CardContent>
               </Card>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Enviar mensaje al paciente */}
+      {msgOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0c1512]/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full shadow-2xl border border-[#d8e0dc] overflow-hidden">
+            <div className="px-5 py-4 border-b border-[#d8e0dc] bg-[#fafcfa]">
+              <h3 className="text-sm font-semibold text-[#0c1512]">Enviar mensaje a {pacienteNombre}</h3>
+              <p className="text-xs text-[#5f7b6f] mt-0.5">
+                El mensaje llega al hilo de consultas del paciente en la app.
+              </p>
+            </div>
+            <div className="p-5">
+              <Textarea
+                value={msgText}
+                onChange={(e) => setMsgText(e.target.value)}
+                placeholder="Escribe tu mensaje para el paciente..."
+                rows={5}
+                className="border-[#d8e0dc] shadow-none focus-visible:ring-[#0d7a63] resize-none"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleEnviarMensaje();
+                }}
+              />
+              <p className="text-[11px] text-[#5f7b6f] mt-2">Ctrl+Enter para enviar</p>
+            </div>
+            <div className="px-5 py-4 border-t border-[#d8e0dc] bg-[#fafcfa] flex justify-end gap-2">
+              <Button
+                variant="outline"
+                className="border-[#d8e0dc] text-[#5f7b6f] hover:text-[#0c1512] shadow-none h-9"
+                onClick={() => { setMsgOpen(false); setMsgText(''); }}
+                disabled={msgSending}
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="bg-[#0c1512] hover:bg-[#3f4f49] text-white shadow-none h-9"
+                onClick={handleEnviarMensaje}
+                disabled={msgSending || !msgText.trim()}
+              >
+                {msgSending ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Send className="h-4 w-4 mr-1.5" />}
+                Enviar
+              </Button>
+            </div>
           </div>
         </div>
       )}

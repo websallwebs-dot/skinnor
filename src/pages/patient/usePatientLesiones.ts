@@ -14,6 +14,7 @@ export interface Seguimiento {
   cambios: string;
   color: string;
   sintomas: string;
+  tamano_mm?: number | null;
   notas?: string | null;
   fotos: SeguimientoFoto[];
   foto_count: number;

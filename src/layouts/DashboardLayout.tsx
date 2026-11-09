@@ -47,7 +47,7 @@ export default function DashboardLayout() {
       {/* Top Header */}
       <header className="sticky top-0 z-30 flex h-16 items-center border-b border-[#d8e0dc] bg-white px-4 shadow-2xs sm:px-6">
         <div className="flex items-center gap-2 font-semibold text-[#0c1512]">
-          <span className="text-xl tracking-tight font-bold">SkinNor</span>
+          <span className="text-xl tracking-tight font-bold">Skinnor</span>
           <Badge className="bg-slate-100 text-slate-700 border-slate-200 text-[10px] uppercase font-semibold">
             Portal Paciente
           </Badge>

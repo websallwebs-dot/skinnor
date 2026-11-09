@@ -1,0 +1,625 @@
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+1
+
+Early Melanoma Diagnosis with Sequential Dermoscopic Images
+Zhen Yu, Jennifer Nguyen, Toan D Nguyen, John Kelly, Catriona Mclean, Paul Bonnington, Lei Zhang, Victoria Mar, and Zongyuan Ge, Member, IEEE
+
+arXiv:2110.05976v1 [eess.IV] 12 Oct 2021
+
+Abstract-- Dermatologists often diagnose or rule out early melanoma by evaluating the follow-up dermoscopic images of skin lesions. However, existing algorithms for early melanoma diagnosis are developed using single timepoint images of lesions. Ignoring the temporal, morphological changes of lesions can lead to misdiagnosis in borderline cases. In this study, we propose a framework for automated early melanoma diagnosis using sequential dermoscopic images. To this end, we construct our method in three steps. First, we align sequential dermoscopic images of skin lesions using estimated Euclidean transformations, extract the lesion growth region by computing image differences among the consecutive images, and then propose a spatio-temporal network to capture the dermoscopic changes from aligned lesion images and the corresponding difference images. Finally, we develop an early diagnosis module to compute probability scores of malignancy for lesion images over time. We collected 179 serial dermoscopic imaging data from 122 patients to verify our method. Extensive experiments show that the proposed model outperforms other commonly used sequence models. We also compared the diagnostic results of our model with those of seven experienced dermatologists and five registrars. Our model achieved higher diagnostic accuracy than clinicians (63.69% vs. 54.33%, respectively) and provided an earlier diagnosis of melanoma (60.7% vs. 32.7% of melanoma correctly diagnosed on the first followup images). These results demonstrate that our model can
+The authors acknowledge support from NHMRC Centre of Research Excellence in Melanoma (1135285), National Natural Science Foundation of China (81950410639), Outstanding Young Scholars Support Program (3111500001), Xi'an Jiaotong University Basic Research and Profession Grant (xtr022019003, xzy032020032), Epidemiology modeling and risk assessment (20200344) and Xi'an Jiaotong University Young Scholar Support Grant (YX6J004).
+Z. Yu, and L. Zhang are with the Central Clinical School, Faculty of Medicine, Nursing and Health Sciences, Monash University, Clayton, VIC 3800, Australia (E-mail: zhen.yu@monash.edu, lei.zhang1@monash.edu).
+L. Zhang is also with the China-Australia Joint Research Center for Infectious Diseases, School of Public Health, Xi'an Jiaotong University Health Science Center, Xi'an, Shaanxi, 710061, China; Artificial Intelligence and Modelling in Epidemiology Program, Melbourne Sexual Health Centre, Alfred Health, Melbourne, Australia; and Department of Epidemiology and Biostatistics, College of Public Health, Zhengzhou University, Zhengzhou 450001, Henan, China.
+J. Nguyen, J. Kelly, C. Mclean and V. Mar are with the Victorian Melanoma Service, Alfred Health, Melbourne, VIC 3004, Australia (Email: je.nguyen@alfred.org.au, victoria.mar@monash.edu)
+Toan D Nguyen, P. Bonnington and Zongyuan. Ge are with the eResearch Centre, Monash University, Clayton, VIC 3800, Australia (email: Paul.Bonnington@monash.edu).
+Zongyuan. Ge is also with the Monash Medical AI and Monash Airdoc Research Centre in Monash University, Clayton, VIC 3800, Australia (email: zongyuan.ge@monash.edu).
+
+be used to identify melanocytic lesions that are at high-risk of malignant transformation earlier in the disease process and thereby redefine what is possible in the early detection of melanoma.
+Index Terms-- Lesion alignment, sequential dermoscopic images, spatio-temporal feature learning, early melanoma diagnosis
+I. INTRODUCTION
+Fig. 1: Lesions de facto are progressively evolving. The benign lesion remains fairly stable in terms of colour and shape, whereas the malignant melanoma exhibits substantial focal enlargement.
+E ARLY diagnosis of malignant melanoma is crucial, as patients can be cured of the melanoma by surgically excising the primary tumour during early, non-invasive stages. For decades, visual dermoscopic examinations have been widely adopted for recognizing melanoma. Existing criteria, such as the `7-point checklist', enable accurate identification of melanoma with distinct dermoscopic features [1]­[4]. However, melanoma at an early stage may be subtle and lacks the dermoscopic criteria for malignancy (e.g., asymmetric shape, irregular pigment network, or diverse pigmentation), making early diagnosis challenging [5], [6]. In [7], the number of lesions biopsied to find a single melanoma ("number needed to treat", or NNT) varied from 8.9 14.6. Thus, in practice, there is a delicate balance between the failure to recognise melanoma and the clinical over-diagnosis of benign melanocytic nevi. Therefore, dermoscopic monitoring has been proposed to monitor inconspicuous lesions, and lesion evolution is an additional criterion used to improve the diagnostic accuracy of borderline lesions [1], [3]. The rationale behind this is that benign melanocytic naevi will remain fairly stable over time, whereas melanoma may develop from a pre-existing benign naevus,
+
+2
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+with changes diagnostic for melanoma difficult to appreciate at a single time point (see Fig. 1). Studies [8]­[10] have shown that approximately 30%50% of melanomas arise from pre-existing benign lesions. Accumulating evidence suggests that evaluation of lesion changes with sequential dermoscopic images will substantially enhance the ability of clinicians to recognize melanomas at earlier stages [1], [3], [11], [12]. Nevertheless, visually differentiating early melanoma from benign lesions remains a challenge because of the subjectivity of human cognitive functioning and variation in the experience of clinicians.
+Artificial intelligence (AI) algorithms have recently demonstrated remarkable performance in dermatology. Deep learning-based techniques are the most promising, and have achieved performance at least equivalent to that of experienced clinicians in image-based diagnosis under experimental conditions [12]­[17]. Esteva et al. [14] achieved dermatologist-level diagnostic accuracy of melanoma classification by training a deep convolutional neural network (CNN) with more than 120,000 single time-point clinical images. Brinker et al. [15] validated a CNN model for recognizing malignant melanoma on 12,000 publicly available dermoscopic images, and their model outperformed 136 of 157 dermatologists. Most existing deep learning models output probability scores of lesions to be diagnosed as melanoma, with little information on how the diagnosis was reached. There is concern that this `black box' effect could lead dermatologists astray. As a result, researchers have also explored the use of CNN models to detect dermoscopic features [18], [19] and imitate the dermoscopic criteria for diagnosis of melanoma to provide more explainable diagnostic results [20], [21]. Although these studies show great potential to improve melanoma diagnosis, their algorithms all use single time-point images. The static nature of lesion presentation can be problematic in early melanoma recognition, for algorithms and clinicians alike. In the context of incipient melanoma, achieving early recognition requires consideration of subtle lesion changes over time. Hence, it is essential to model lesion evolution with sequential dermoscopic images to improve diagnostic algorithms and tools for the surveillance of high-risk individuals.
+Several studies have developed algorithms for sequential dermoscopic image analysis [22]­[25], yet their main focuses were on skin lesion image registration or lesion tracking, without assessing lesion evolution for early melanoma diagnosis. Navarro et al. [26] directly computed the pixel value difference between registered skin lesion image pairs and measured the evolution of the lesion's size. Although they considered changes in lesion diameter, they did not evaluate the evolution of dermoscopic features for subsequent melanoma diagnosis. Moreover, the dataset used in their study was small (10 image pairs across months rather than years). Very recently, Zhang et al. [27] proposed a Siamese neural network to detect shortterm lesion changes from dermoscopic image pairs by simply giving predictions of `changed' or `unchanged', however the results of the lesion changes were not further assessed for diagnosis.
+In this study, we propose to model lesion evolution with sequential dermoscopic images for early melanoma diagnosis.
+
+Our goal is to incorporate the temporal dynamics of lesion changes as an additional clue and thereby improve diagnostic accuracy of melanoma recognition at an early stage. To this end, we formulate our framework in three steps: 1) skin lesion image alignment, 2) spatio-temporal feature learning, and 3) classification for early diagnosis. We first align lesion images at different time points into the same coordinates, and extract lesion modification regions by computing pixellevel differences between consecutive images. Then, we adopt a two-stream network to learn spatio-temporal features from the aligned dermoscopic images, as well as from difference images to capture subtle lesion changes. Finally, we train the classifier on the aggregated spatio-temporal features and output predictions for each lesion at individual time points to achieve diagnosis earlier in the image sequence. Both our problem setting on early melanoma diagnosis using serial data and the proposed framework to register lesion and incorporate the relevant spatio-temporal information are new in the community.
+The main contributions of this study are summarized as follows:
+· We develop an image-based AI for early melanoma recognition with clues from lesion evolution, instead of relying solely on the static presentation of lesions. To the best of our knowledge, this is the first study to model lesion modification using serial dermoscopic images for early melanoma diagnosis.
+· We collect a dataset consisting of histologically confirmed serial images of 179 individual skin lesions to evaluate the effectiveness of the proposed approach. Experimental results demonstrate the benefit of algorithm development using serial images compared with that of using static images and demonstrate the superiority of our method over other sequential learning models.
+· We invite 12 dermatologists and dermatology registrars to assess our serial skin lesion image dataset, and further compare their performance with the diagnostic results from our model. The in-depth analysis of the results provides some experimental evidence that the proposed model may achieve earlier and more accurate diagnoses than clinicians.
+II. RELATED WORKS
+A. Skin Lesion Image Alignment
+Image alignment, also known as image registration, is the process of finding the correspondence between two images and transforming the two images into the same coordinate system with matched contents [28]. Aligning skin lesion images enables comparison of lesions at different times to evaluate lesion changes. Although image registration has been extensively explored in various medical image analysis tasks [29], [30], only a few researchers attempted to align images of skin lesions.
+Ilias [24] proposed a hybrid algorithm that aligns dermatological images by separately searching four parameters of geometric transformation with log-polar transformation and a predefined similarity criterion. Anagnostopoulos et al. [23] utilized a modified scale invariant feature transform (SIFT)
+
+AUTHOR et al.: PREPARATION OF PAPERS FOR IEEE TRANSACTIONS AND JOURNALS (FEBRUARY 2017)
+
+3
+
+with random sample consensus (RANSAC) to estimate affine transformations for the registration of dermoscopic images. Huang et al. [22] treated melanoma registration as a bipartite graph matching problem and computed a bipartite graph from segmented lesion images. Recently, Li et al. [25] explored the detection and tracking of lesions from total body images using a deep neural network. Fulgencio et al. [26] combined superpixel and SIFT descriptors to detect and describe local points in dermoscopic image pairs, and then aligned images using the estimated geometric transformation from matched features. In these studies, however, researchers either stopped at the stage of skin lesion registration without further exploring melanoma diagnosis with the aligned lesion images or simply performed registration on synthetic lesion images. In contrast, in the present study, we align follow-up images of skins and further study the modelling of lesion evolution with aligned serial lesion images for early melanoma diagnosis.
+B. Sequential Images Modelling
+The core purpose of modelling sequential images is to effectively learn discriminative spatio-temporal features. Existing methods for modelling sequential images can be largely grouped into three categories. Methods in the first category usually utilize convolutional neural networks (CNNs) to extract high-level abstract representations from each input image, and then perform temporal aggregation via general pooling or recurrent neural networks (RNNs) [31], [32]. Although this type of method forms a popular baseline in modelling temporal relations from serial data, high-level CNN features lack detailed spatial information and are therefore not suitable for capturing subtle dermoscopic changes. The second category constitutes approaches that directly learn spatio-temporal features using 3D networks or pseudo 3D networks [33]­ [35]. By stacking multiple images as inputs, these models can effectively extract the discriminative spatio-temporal features. State-of-the-art results were achieved in a range of sequential image learning tasks, especially in the video analysis domain [33], [34]. Nevertheless, in the medical domain, serial dermoscopic imaging samples from each patient vary in length and often have much fewer images when compared to the available frames from video sequences (e.g., 35/patient vs. more than 30/video clip). Hence, it is impractical to directly design a 3D network or use a pre-trained 3D network on our sequential skin lesion imaging data [33], [36]. The third category of approaches [37]­[39] decompose spatio-temporal feature learning tasks by explicitly learning spatial characterizations and temporal evolutions with two-stream network architectures. Generally, the spatial stream accepts RGB images as input, whereas the temporal stream accepts optical flow or RGB difference images as input. Such two-stream networks have been demonstrated to be very effective in learning temporal relations from sequential images, and achieved competitive results compared with that of a heavy 3D CNN. In our study, we designed a two-stream network for modelling lesion changes, but we further connected the two sub-networks with multiple feature difference extraction modules. Accordingly, our model is capable of learning spatio-temporal dermoscopic
+
+features from both pixel-level differences and differential CNN feature maps.
+C. Computer-aided Early Melanoma Diagnosis
+Over the past several years, a large number of algorithms have been proposed for automated melanoma diagnosis [40]­ [42]. An overwhelming majority of them use deep CNNs as their backbones due to recent advancements in deep learning techniques [43]­[45] and the release of publicly available skin lesion datasets [46], [47]. Yu et al. [13] presented a very deep CNN and a set of schemes to classify melanomas using limited training data. Mobiny et al. [48] proposed a Bayesian network for recognizing skin lesion cancer. Esteva et al. [14] fine-tuned a CNN model with more than 120,000 images and achieved dermatologist-level diagnostic performance. Studies [10], [15], [49] presented CNN models that either outperform or on par with dermatologists. Other efforts have been made to identify skin cancer using algorithms such as ensembles of different models [50], [51], feature aggregation [52], [53], multi-stage CNN models [54], [55], and a combination of multimodal data [51], [56]. In addition, a new deep CNN that combined dermoscopic data with clinical data (e.g., age, sex, diameter, and body location of lesion) was developed for the subtle differential diagnosis of early melanomas from their simulator's dysplastic nevi [57]. Because deep learning models are usually considered to be uninterpretable and dermatologists are concerned with how CNN models provide predictions [58], several studies have explored constructing models in a more intuitive manner. Kawahara et al. [19] proposed a model for detecting dermoscopic features for melanoma recognition. In [21], the author developed an algorithm directly modelling the dermoscopic criteria of the 7-point checklist and providing prediction for each criterion respectively. However, all existing studies on computer-aided melanoma diagnosis were designed for identifying cancerous melanoma from other types of lesions using single time-point images. In these studies, the researchers ignored the diagnostic performance of their models on incipient melanoma or featureless lesions. In contrast, in this study, we incorporate clues of lesion changes with sequential dermoscopic images to recognize malignant melanomas early in their evolution. To the best of our knowledge, this is the first study on an algorithm for early melanoma diagnosis using serial dermoscopic imaging data. Additionally, extensive experiments verified that the proposed model is capable of outperforming other commonly used sequence models and achieving earlier and more accurate performance than clinicians.
+III. METHOD
+An overview of the proposed method is presented in Fig. 2. The proposed method includes three key components. The lesion alignment module, which aligns lesion images at different time points into the same coordinate system to extract the lesion growth region; the spatio-temporal network, which learns spatio-temporal features from aligned sequential images using an interconnected two-stream network; and the early diagnosis module, which achieves early melanoma diagnosis
+
+4
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+with the learned spatio-temporal feature using a sequentialbased contextual aggregation module and a knowledge distillation training strategy.
+
+as Xa = {X1a, X2a, ..., XaN }. We summarize the detailed implementation of the lesion alignment module in Algorithm 1.
+
+Algorithm 1 Skin lesion image alignment with rigid transfor-
+
+mation.
+
+Input: Skin lesion image sequence Xua = Xu1 a, X2ua, ..., XNua , threshold of the
+
+key point detector d Output: Aligned image sequence
+
+Xa
+
+=
+
+X1a
+
+1: Initialization: Set reference image Xref
+
+,=Xa2X,1a...=, XIaNmage
+
+resize
+
+X1ua
+
+, and
+
+note the image to be aligned as Xdst
+
+2: for i in {2, ..., N } do:
+
+3: Xdst = Image resize X1ua
+
+4: kpref , desref = AKAZE Xref , d
+
+5: kpmoving , desdst = AKAZE (Xdst, d)
+
+6: matches = HD M atching desref , desdst
+
+7: kpref , kpdst = Convert matches, kpref , kpdst
+
+8: Compute transformation matrix: T = RAN SAC
+
+9: 10: 11:
+
+reXXtdursrentf==XI1aXm,iaXa=a2ge, X..w.d,asXtrNaping (Xdst, T )
+
+kpref , kpdst
+
+Fig. 2: Overview of the proposed method for early melanoma diagnosis. (a) shows the lesion image alignment module. (b) shows the architecture of the spatio-temporal network (STN). (c) is the early diagnosis module.
+A. Skin Lesion Alignment Module
+Because a lesion may vary in its viewpoint and location when images are captured at different time points, we first apply an alignment module to offset these variations. The alignment also assists in tracking changes in dermoscopic features over time. The alignment module consists of three stages: local feature detection, feature matching, and image transformation. In contrast to existing studies which prefer aligning lesion images using a similarity transformation [23], [26], we instead use a rigid transformation (also known as Euclidean transformation), because scaling a lesion image will distort the measurement of actual lesion enlargement statistics.
+We define the unaligned image sequence of the i-th lesion with N screenings as Xui a = {Xui1a, Xui2a, ..., XuiNa }1. For each dermoscopic image sequence Xua, we use the first image as the reference image and perform image alignment sequentially from the second image until the last image. We resize all images to a fixed size of 400×3202 and then detect local key points from each image pair using the accelerated KAZE algorithm (AKAZE) [59]. Subsequently, we perform feature matching among the key points of the image pairs using the Hamming distance (HD) and calculate a 3 × 3 transformation matrix for alignment using random sample consensus (RANSAC). Finally, we denote the aligned image sequence
+1i will be omitted in the following sections for simplicity. 2To avoid distorting the shape of lesions, we resize all images with a short side length of 320 while maintaining the aspect ratio. For subsequent feature learning, we crop aligned images with a size of 320×320 as input.
+
+B. Spatio-Temporal Feature Learning Module
+
+The spatio-temporal feature learning module consists of two sub-networks: a spatial appearance encoding network and a temporal difference encoding network. The spatio-temporal network aims to simultaneously learn abstract appearance representations from individual lesions while also capturing the temporal relations between consecutive images from both raw image pixel differences and multi-level CNN feature differences.
+1) Spatial Appearance Encoding Network: The spatial network is utilized to encode dermoscopic images into different levels of appearance abstraction which will be incorporated into the temporal network. We employ an off-the-shelf ImageNet pre-trained ResNet-34 [60] as the backbone. The output of the spatial network is obtained by averaging the prediction scores of individual lesions from the input sequence:
+
+Predspatial
+
+=
+
+1 N
+
+N
+PS
+t=1
+
+(Xat , WS )
+
+(1)
+
+where PS (Xat , W) denotes the mathematical expression of the spatial network with parameters WS that operates on one dermoscopic image of Xta.
+2) Temporal Difference Encoding Network: Similar to the
+
+spatial network, we use the ResNet-34 as the backbone of
+
+the temporal network. Instead of providing the network with
+
+static inputs, we provide the difference in pixel intensities
+
+between two consecutive images into the temporal network. For each image sequence Xa, the image differential map Xtd at time t is defined as the pixel-wise value subtraction between consecutive dermoscopic images of Xat-1and Xat . To suppress noise from irrelevant contexts, we implement the
+
+colour constancy algorithm C (·) based on the general Gray
+
+World [61] and a hair removal function H (·) which was
+
+realized by contour detection and morphological filtering:
+
+Xtd = C (H (Xat )) , -C H Xta-1
+
+(2)
+
+Our motivation is that subtle dermoscopic changes can be directly reflected by pixel distinctions after image alignment.
+
+AUTHOR et al.: PREPARATION OF PAPERS FOR IEEE TRANSACTIONS AND JOURNALS (FEBRUARY 2017)
+
+5
+
+As shown in Fig. 2 (b), the differential image clearly exhibits enlargement of the lesion, which is one of the key malignant features for melanoma diagnosis. Thus, we can explicitly learn the temporal evolution of lesions from pixel-level modifications at this branch.
+3) Feature Difference Extraction: In contrast to computing skin lesion difference in the raw pixel space, the abstract appearances captured by the CNN are more robust to translation and condition changes [38], [39]. Hence, we further incorporate spatial feature differential information from consecutive images into the temporal encoding network by adding the feature map element-wise to the corresponding layers.
+Specifically, during the forward passing of a dermoscopic image sequence, we insert the feature difference extraction block (FDE) at each stage of the spatial encoding network to extract multiple levels of spatial differential features between consecutive images. At time t for each image sequence, we have:
+
+D Mt-1, Mt =
+
+Mt1 - Mt1-1 , M2t - M2t-1 , . . . , Mlt - Mlt-1 (3)
+
+where Mtl represents the feature maps of Xta that are extracted from l layer in the spatial stream network. Hence, the output
+
+of the temporal sub-network is given by:
+
+prediction scores from various time points as models can be easily disturbed by noise (e.g., lesion misalignments and lighting differences) and by its own model uncertainty [62]. Therefore, we propose to deal with these issues by designing a sequential context aggregation block based on an intraattention mechanism, as well as a customized training strategy using temporal knowledge distillation.
+1) Sequential Context Aggregation Block: In practice, evaluating more images of a lesion can lead to a more consistent and confident diagnostic result. This means that the confidence score of a lesion should be monotonic for either melanoma or benign lesions, that is, benign lesions' scores should continue to decrease or remain unchanged, whereas malignant melanoma should have increased prediction scores. To maintain this consistency, it is crucial to correlate the relationship of the features across time and regulate them in an adaptive way for decision making.
+
+1N
+
+Predtemporal = N - 1
+
+PT
+
+Xtd, D Mt, Mt+1 , WT .
+
+(4)
+
+t=2
+
+where PT (·) denotes the mathematical expression of the temporal network with parameters WT .
+4) Optimization and Coupled Spatio-temporal Feature: We train the STN on the melanoma diagnosis task with all images of each sequential set. We apply a sigmoid function to the averaged output of the STN and optimize the entire model with binary cross-entropy loss. Therefore, the proposed STN can track the dermoscopic changes over time using clues provided by the temporal difference information from both the raw pixels and the abstract features. Once the model is welltrained, we construct a series of coupled spatio-temporal features F = {fST 1 , fST 2 , ..., fST N }  RN×C by concatenating output from the penultimate layers of the two subnetworks for the subsequent early diagnosis task. To elaborate, at time t, the feature fST t contains spatial appearance characterisation from the current lesion image and abstraction of temporal changes associated with the previous lesion image.
+
+Fig. 3: Detail of the sequential context aggregation block.
+
+Thus, we propose to aggregate features from different time points with a masked sequential context aggregation block (SCA) which is mainly inspired by [63]. The SCA block consists of three linear transformation layers and a masked softmax layer. Similar to [64], for a serial input of spatio-temporal features F = f ST1 , f ST2 , ..., f STN  RN×C , we first generate weights A = {a1, a2, ..., aN }  RN by applying a masked softmax on the matrix of query-key mapping:
+
+A = Softmax
+
+Q
+
+Wq
+
+,
+
+F
+
+· 
+
+K
+
+(Wk
+
+,
+
+F)T
+
+· Mask
+
+(5)
+
+K
+
+ 1 -inf ... -inf -inf 
+
+Mask
+
+=
+
+1  ...
+
+1 ...
+
+... -inf -inf 
+... ... -inf 
+
+(6)
+
+1 1 ... ...
+
+1
+
+Then, we compute the weighted features and further concatenate them with the original input features:
+
+C. Early Diagnosis Module
+The early diagnosis module evaluates spatio-temproal features from follow-up images of lesions and provides predictions at individual time points as the lesion progresses. This is entirely different setting compared with all previous algorithms for early melanoma detection which are developed on static images.
+An early diagnosis model should be capable of accurately predicting a lesion's category at any given time point from a series of inputs. However, achieving this can be difficult for several reasons: 1) prediction accuracy for early predictions inevitably tends to be worse than that of later stages because of insufficient clues regarding lesion evolution; 2) inconsistent
+
+F = Concat (F, A · V (Wv, F))
+
+(7)
+
+where Mask  RN×N is used to zero out future values so that a certain time point's query vector cannot make use of unseen feature information; Q (·), K (·), and V (·) denote linear transformation functions, and Wq  RN×K , Wk  RN×K and Wv  RN×V are the corresponding parameters; In our study, we set K = V = 16, hence the final dimension of each output feature in F = f ST1 , f ST2 , ..., f STN  RN×(C+V ) is 48.
+2) Temporal Knowledge Distillation: To reduce the gap in prediction accuracy between early and late predictions, we propose a knowledge distillation based training strategy to distill tendency knowledge from a later time point to an earlier time point. During training, we incorporate a constraint
+
+6
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+term into the objective function to penalize the dissimilarity between the predictions at different time points:
+
+L =  · Ltkd + (1 - ) · Lbce
+
+(8)
+
+1 M N -1
+
+Ltkd
+
+=
+
+- M
+
+y~N · log  wclss · f STt +
+
+i=1 t=1
+
+(9)
+
+(1 - y~N ) · log 1 -  wclss · f STt - Ly~N
+
+1MN
+
+Lbce
+
+=
+
+- M
+
+i=1 t=1
+
+yi · log 
+
+wclss · f STt
+
++
+
+(10)
+
+(1 - yi) · log 1 -  wclss · f STt
+
+where  is the coefficient between the distillation loss Ltkd and binary cross-entropy loss Lbce; Ly~N is the entropy of predictions from the last time point which only serves the purpose of simplifying notation and will not affect the optimisation; yi is the ground truth label of the i-th image sequence; and wclss denotes the weights of the final classifier which shares the same values across time points.
+3) Prediction and output mechanism: During training stage, we fix the length of the input image sequences by padding the initial screening image or by randomly sampling the required number of images. We optimize the early diagnosis module by jointly minimizing the disagreement between the groundtruth and the predictions from different time points. Once the module is well-trained, we compute the decision thresholds at each time point according to the maximum Youden's index (sensitivity + sensitivity - 1) [65]. At the inference stage, as we sequentially input lesion images into our model, we need to generate prediction labels of a lesion over time to determine the transition point at which a benign lesion evolves into melanoma. We achieve this by designing an output mechanism that cumulatively compares the probability scores and the thresholds at consecutive time points. For image sequences having a length larger than the input length of our model, we generate a series of fixed-length overlapped sub-sequences and then vote on their prediction labels to obtain the prediction labels of the entire sequence.
+
+IV. EXPERIMENTS AND RESULTS
+A. Dataset and Implementation
+1) Dataset and evaluation: In this study, we collected 179 serial dermoscopic imaging data from 122 patients, including a total of 730 dermoscopic images. The dataset is wellbalanced and consists of 90 benign lesions and 89 malignant lesions (including both invasive and in situ melanoma). Each lesion undergoing digital dermoscopic imaging monitoring was eventually excised due to clinical concerns and subsequently verified by pathological examination. The length of the dermoscopic image sequences varied from 1 to 12, and the average number of images in each image sequence was approximately 4.
+We performed five-fold cross-validation to evaluate our method. Specifically, we first randomly partitioned the entire dataset into five folds. During each round of cross-validation, we selected one fold as the testing set and further split the remaining part of the data into the training and validation sets (90% for training and 10% for validation). The testing set
+
+was successively selected from the five-fold data, which means that each individual lesion would be used for testing after the five-fold cross-validation. In addition, the hyper-parameters and models were only trained with the training set and the validation set, that is, the testing set was never utilized to select a model. Training details are provided in the Appendix (Section A).
+2) Baseline models for comparison: We implemented four deep learning-based baselines for performance comparison: 1) Single-img-CNN: The Single-img-CNN was trained with lesion images of single time without considering the temporal information; 2) CNN-Score-Fusion: The CNN-Score-Fusion model is similar to the Single-img-CNN, except during test phase we incorporated temporal clues by averaging the disease prediction scores of images within the input sequence; 3) CNN-Feature-Pooling: The CNN-Feature-Pooling model was directly trained with sequential images by combining the CNN features of individual images via average pooling; 4) CNN-LSTM: The CNN-LSTM model, trained on the image sequence, performed temporal aggregation over the CNN features of sequential dermoscopic images using LSTM. All models used the same ImageNet pre-trained ResNet-34 as the backbone. We provide the details of these models in the Appendix.
+3) Interaction platform for reviewers: We invited 12 clinicians to evaluate our serial dermoscopic data and the diagnostic results were compared to that of our model. The serial images were displayed to the reviewers using QualtricsTM (Provo, UT, USA). The reviewers were blinded to the patient diagnoses. Information provided for each case included age, sex, location of the lesion, and date of imaging. The reviewers were initially only shown the first dermoscopic image in the sequence and were asked to provide a diagnosis of either `benign' or `malignant'. As the reviewers progressed through the sequence of images for each case, dermoscopic images were provided side-by-side to allow an assessment of changes. Prior responses could not be changed once the diagnosis was entered and submitted. Ten single time point melanoma images were included to reduce bias from reviewers, in which they might assume the first serial image in any case series to be benign.
+B. Results of Skin Lesion Alignment
+Lesion alignment pre-processes the image for the subsequent extraction of the lesion growth region by computing image differences. We evaluated the performance of lesion alignment by providing aligned image pairs and corresponding image differences. Fig. 4 shows qualitative visual alignment results for consecutive dermoscopic images. We can see that the warped images and the reference images show strong location and content-wise consistency when compared to the unaligned samples. We then further verified the necessity of the alignment component by training the two-stream network for lesion diagnosis using aligned and unaligned sequential image sequences. The results are presented in Table I.
+C. Result of Melanoma Diagnosis on Sequential Images
+
+AUTHOR et al.: PREPARATION OF PAPERS FOR IEEE TRANSACTIONS AND JOURNALS (FEBRUARY 2017)
+
+7
+
+Fig. 4: Results of dermoscopic image alignment. For each sample, we calculated the estimated transformation parameters, including the rotation and translation. We also show the image differences listed in the rightmost column without alignment. The pixel value in white indicates the mismatch region between the reference and moving images.
+
+TABLE I: Results of the comparison study and ablation studies, reported on image sequences with a length of 4.
+
+Methods
+Single-img-CNN CNN-Score-Fusion CNN-Feature-Pooling
+CNN-LSTM Proposed model without alignment
+Only spatial network Only temporal network Spatio-temporal network Spatio-temporal network with interconnected setting Proposed model with alignment Only spatial network Only temporal network Spatio-temporal network Spatio-temporal network with interconnected setting
+
+Accuracy(%) 61.24±6.54 60.67±8.04 60.67±7.05 64.47±11.91
+62.79±7.42 62.79±4.81 67.19±6.05 67.11±11.01
+62.89±5.78 65.54±7.14 68.11±7.21 69.98±10.48
+
+AUC(%) 66.76±9.87 67.13±8.31 66.09±6.62 68.69±11.78
+65.41±6.72 68.72±7.75 70.06±7.53 73.25±14.12
+68.98±6.85 70.63±11.16 71.73±6.21 74.34±10.83
+
+Precision(%) 61.51±8.16 60.85±8.29 61.12±9.39 65.76±11.87
+63.48±14.86 63.00±11.35 67.03±14.37 68.30±11.92
+63.20±10.47 66.72±9.51 65.89±12.07 71.61±13.53
+
+Sensitivity(%) 58.53±6.59 60.02± 7.95 57.21±6.77 62.31±10.60
+57.66±8.53 60.52±4.64 63.93±6.89 63.79±10.51
+60.45±5.76 61.85±6.03 66.89±10.43 69.66±9.68
+
+Specificity(%) 63.79±6.39 61.53±8.34 63.87±7.80 66.85±12.69
+67.86±7.15 65.48±5.22 70.42±6.34 70.42±11.53
+65.64±6.25 69.20±8.43 68.30±4.52 70.99±12.47
+
+Fig. 5: Comparison results of the sequence learning models when varying the length of the training image sequence.
+
+We evaluated the performance of the spatio-temporal network (STN) for melanoma diagnosis on sequential images. For each dermoscopic image sequence, we used the STN to predict melanoma using all images of each sequence. Our aim is to verify the effectiveness of the proposed STN and the benefit of incorporating temporal information in melanoma diagnosis. Notably, this task is different from the following early melanoma diagnosis task which needs to make predictions at each time point.
+We first compare all the methods at the sequence length of N = 4 in Table I which was the average length of our sequential dataset. Further results for various sequence lengths are shown in Fig. 5. We found that all of the models using sequential images had better AUC than the Single-imgCNN trained with snapshot images, and the proposed model
+
+achieved the best performance with an accuracy of 69.98%, AUC of 74.34%, precision of 71.61%, sensitivity of 69.66%, and specificity of 70.99%. The temporal stream network has better performance when compared to using just the spatial stream network. By combining the two-stream network, we obtained a significant performance improvement. Notably, by removing the interconnected setting in our model, the AUC was reduced by 1.7%. Our model achieved a consistent AUC boost from 67.72% to 74.34% when increasing the sequence length from 2 to 4 3. However, there was no obvious performance improvement for all the comparative sequential models when the sequence length was increased. These results
+3We equalized the required input length by adding the first screening image or randomly selected consecutive images.
+
+8
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+TABLE II: The results of the comparison and ablation studies for early diagnosis. The AUC at each time point is reported.
+
+Features CNN spatial feature Coupled spatio-temporal feature
+
+AUC Times
+Models
+Single-img-CNN Single-img-CNN (HAM)
+CNN-Score-Fusion CNN-Feature-Fusion
+CNN-LSTM CST-Baseline CST-LSTM
+CST-SCA CST-SCA-TKD
+
+Time 1
+63.04±7.14 65.47±7.46 60.59±9.88 60.59±9.88 69.79±9.64 68.71±9.03 69.04±9.44 68.76±8.93 70.11±8.22
+
+Time 2
+61.25±7.14 64.22±6.77 65.07±4.19 61.73±8.40 69.13±8.29 69.51±6.70 70.43±8.86 69.79±8.21 70.81±7.90
+
+Time 3
+62.61±8.78 65.54±7.14 56.77±4.58 63.34±10.05 68.29±15.36 70.29±11.72 71.05±9.78 70.40±11.13 71.75±10.17
+
+Time 4
+66.13±7.14 70.26± 3.35 65.72±8.13 65.48±8.36 65.92±6.99 67.56±6.35 72.05±8.43 71.98±8.68 72.73±7.70
+
+Fig. 6: Prediction scores of individual lesions from different models. (a)-(d) are benign lesions and (e)-(f) are malignant lesions.
+
+demonstrate the benefit of incorporating temporal clues in melanoma diagnosis, and demonstrate the effectiveness of the proposed method in learning spatio-temporal features from serial images.
+D. Evaluation of Early Melanoma Diagnosis
+We evaluated the effectiveness of each component designed for the early melanoma diagnosis task. We input the image sequence into our model, and compute probability of a lesion belonging to melanoma at each individual time point. We report the ablation results, as well as the comparative results with other models. Results: Apart from the four baseline models, we also pretrained a model with HAM-10000 [47], and then further finetuned it on our sequential dermoscopic data. We refer to this model as Single-img-CNN(HAM). Regarding the proposed coupled spatio-temporal feature (CST), CST-Baseline denotes directly learning a classifier at each time point with the CST features of that time. CST-LSTM refers to the computation of the probability score at individual time points using LSTM. CST-SCA-TKD and CST-SCA are the proposed early diagnosis modules trained with and without the temporal knowledge distillation strategy, respectively. The results are provided in Table II, which shows that the performance of all the baseline models was inferior to that of the proposed model. In addition, we observed that the AUC of these models when taking more
+
+time points of images, that is, when incorporating more clues regarding lesion growth, did not show consistent improvement. For example, the CST-Baseline showed an increase in performance before Time 3, but the AUC decreased at Time 4. The AUC at Time 4 was worse than that at Time 1 by 1.2%. When large-scale external data were used, the single-img-CNN (HAM) achieved significant improvements of 2%, 3%, 3%, and 4% at the four different time points, respectively, compared with that of Single-img-CNN. However, the performance was still inferior to our method, and the AUC was even worse than our CST-baseline model, which demonstrates the necessity of including CST features for this task.
+Prediction Consistency with the Aggregation Mechanism: To visualize the prediction score trend for each image sequence, we present the prediction results of each lesion in Fig. 6. We can observe that the prediction scores of CSTBaseline show inconsistent fluctuations across various time points. We speculate that the reason for this is that some lesions do not change evenly over time, and thus lesion evolution among consecutive images does not always show consistent, linear changes. In this case, the lesion growth captured by our CST features will vary according to their discriminability. In contrast, the proposed CST-SCA obtained a consistent performance improvement over time with an AUC of 68% at Time 1, increasing to an AUC of 71.98% at Time 4. In Fig. 7, we visualize the average prediction scores of benign
+
+AUTHOR et al.: PREPARATION OF PAPERS FOR IEEE TRANSACTIONS AND JOURNALS (FEBRUARY 2017)
+
+9
+
+Fig. 7: Prediction scores of lesions from different models by varying time. We average the probability scores of all benign and malignant lesions, respectively. The proposed model shows clear trends for both classes.
+
+TABLE III: Comparison results of clinicians and our model.
+
+Based on final image diagnosis
+
+Accuracy (%) Sensitivity (%) Specificity (%)
+
+Registrars (n=5) ; E<5
+
+Reviewer 1
+
+54.75
+
+85.39
+
+24.44
+
+Reviewer 2
+
+51.96
+
+42.70
+
+61.11
+
+Reviewer 4
+
+56.42
+
+48.31
+
+64.44
+
+Reviewer 7
+
+43.58
+
+59.55
+
+27.78
+
+Reviewer 12
+
+51.96
+
+75.28
+
+28.89
+
+Dermatologists (n=7) ; E5
+
+Reviewer 3
+
+55.31
+
+53.93
+
+56.67
+
+Reviewer 5
+
+51.96
+
+71.91
+
+32.22
+
+Reviewer 6
+
+54.19
+
+31.46
+
+76.67
+
+Reviewer 8
+
+54.19
+
+79.78
+
+28.89
+
+Reviewer 9
+
+56.98
+
+67.42
+
+46.67
+
+Reviewer 10
+
+59.78
+
+64.04
+
+55.56
+
+Reviewer 11
+
+60.89
+
+64.04
+
+57.78
+
+Average results
+
+Registrars (n=5)
+
+51.73
+
+62.25
+
+41.33
+
+Dermatologists (n=7)
+
+56.19
+
+61.80
+
+50.63
+
+All (n=12)
+
+54.33
+
+61.99
+
+46.76
+
+Our model
+
+63.69
+
+60.67
+
+66.67
+
+Based on first time malignant diagnosis Accuracy (%) Sensitivity (%) Specificity (%)
+
+55.87 51.40 58.10 43.58 52.51
+
+87.64 47.19 59.55 62.92 82.02
+
+24.44 55.56 56.67 24.44 23.33
+
+55.87 51.96 54.19 53.07 56.98 57.54 60.34
+
+55.06 74.16 37.08 80.90 69.66 68.54 65.17
+
+56.67 30.00 71.11 25.56 44.44 46.67 55.56
+
+52.29 55.71 54.28 61.45
+
+67.87 64.37 65.82 75.28
+
+36.89 47.14 42.87 47.78
+
+Fig. 8: Loss and AUC of our model by varying the coefficient of the proposed temporal distillation loss.
+lesions and malignant melanoma in the test data, respectively. The overall predictions of benign lesions remained unchanged and gradually decreased over time, whereas the predictions of malignant lesions gradually increased over time. This result verifies the effectiveness of the proposed aggregation mechanism in tracking lesion evolution and maintaining prediction consistency. Temporal Knowledge Distillation: We evaluated the influence of incorporating the temporal knowledge distillation in our model. As listed in Table II, the CST-SCA-TKD obtained AUCs of 70.11%, 70.81%, 71.75%, and 72.73% from Time 1 to Time 4, respectively. Compared with that of CST-SCA, the TKD training strategy provided an improvement of 1.4%, 1.1%, 1.3%, and 0.8% at each of the four time points. Moreover, the AUC gap between Time 1 and Time 4 decreased from 3.2% to 2.6%. Fig. 8 shows the effect of the coefficient  on the objective function (Eq. (8)). By increasing
+
+ from 0.1 to 0.5, the performance of early predictions first increases and then slightly decreases, and  = 0.2 gives the best performance. In Fig. 8, we plot the training loss results under different  settings, and we can observe that TKD significantly reduces the divergence between early predictions and later predictions.
+E. Compared with human results
+In this section, we compare the early diagnosis performance of our model with that of human reviewers. The comparison includes the overall diagnostic accuracy and the time point at which the malignant lesions were correctly diagnosed. The serial dermoscopic image dataset was reviewed by 12 reviewers, including seven experienced dermatologists and five registrars from the Victorian Melanoma Service 4.
+As shown in Table III, based on the diagnosis made on the final image of each sequential set, clinicians achieved an overall accuracy, sensitivity, and specificity of 54.33%, 61.99%, and 46.76%, respectively. Consultant dermatologists were more accurate and had better accuracy and specificity than registrars by 4.45% and 9.30%, respectively, although both had similar sensitivities. Compared to human reviewers, our model performed better with respect to accuracy, demonstrating an accuracy of 63.69% which was 9.36% higher than
+4The five registrars' experience was less than five years (E < 5), whereas the dermatologists each had more than five years of experience (E 5).
+
+10
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+Fig. 9: Comparison of diagnostic results across time and later time points indicate that reviewers and the model are presented with more images of a lesion. Figures from left to right show the results at Time 1 to Time 4, respectively. Both human reviewers and our model tended to perform better when accessing more information regarding lesion evolution.
+
+Fig. 10: Lesions arranged by the level of difficulty determined by the number of clinicians who correctly identified the case.
+
+Fig. 11: The top five image sequences show lesions that were correctly but incorrectly diagnosed by the clinicians and our model. The four image sequences below show lesions that were incorrectly diagnosed by clinicians but correctly diagnosed by our model. Red and green bars below each lesion represent malignant and benign predictions for individual images, respectively.
+the clinician's overall accuracy and 2.79% greater than that of the one clinician with the highest accuracy. Notably, the algorithm exhibited a specificity of 66.67% which was 19.82% higher than that of the clinicians. The sensitivity of our model was similar to that of clinicians at 60.67
+Additionally, we reviewed the diagnostic accuracy for invasive and in situ melanomas separately. Of the 89 melanomas, 34 (38.2%) were invasive with a mean Breslow thickness of
+
+0.5, and 55 (61.8%) were in situ melanomas. Clinicians accurately diagnosed 67.9% of the invasive melanomas (67.94% for dermatologists and 68.23% for registrars) and 58.3% of the in situ melanomas (58.18% for dermatologists and 58.54% for registrars) compared to our model which correctly diagnosed 61.8% of invasive melanomas and 60.0% of insitu melanomas. The median Breslow thickness of the invasive melanomas that were incorrectly diagnosed by the clinicians and the model was similar, at 0.3 mm.
+Fig. 10 shows the diagnostic result for each sequential set of lesions arranged by the level of difficulty determined by the number of clinicians who correctly identified the case. Our dataset contains a balance of `easy' to diagnose lesions, which the majority of clinicians were able to diagnose correctly, and `difficult' to diagnose lesions, which the majority of clinicians were unable to diagnose correctly. There was no clear correlation between the difficulty of the cases based on the clinicians' responses and the correct diagnosis from the model. Of the 10 cases correctly diagnosed by all clinicians, four were incorrectly diagnosed using the algorithm. When examining these cases in detail together with the other cases, the model incorrectly diagnosed many smaller lesions and lesions with poorly defined borders.
+Although it is important to consider the results based on the final image diagnosis, in a real-world clinical setting, a malignant diagnosis would warrant a biopsy which would lead to the cessation of serial monitoring. Therefore, we also performed an analysis based on when a malignant diagnosis was first reported by either the clinicians or the algorithm. When comparing results from final image diagnosis to that of the first malignant diagnosis, clinicians had similar accuracy, and the model showed reduced accuracy from 63.69% to 61.45%.
+
+AUTHOR et al.: PREPARATION OF PAPERS FOR IEEE TRANSACTIONS AND JOURNALS (FEBRUARY 2017)
+
+11
+
+Fig. 12: Early diagnosis results for all melanomas for the 12 clinician reviewers (coloured dots) compared to the proposed model(black diamonds). The horizontal axis denotes the lesion ID and the vertical axis represents the length of the image sequence. Dots are placed at the image number in the sequence corresponding to the time point at which the correct diagnosis was made. The pink bar denotes a failure to make a correct diagnosis of melanoma (best viewed while zoomed in).
+
+Fig. 13: Early diagnosis results for all benign lesions for the 12 clinician reviewers (coloured dots) compared to the proposed model(black diamonds). The horizontal axis denotes the lesion ID and the vertical axis represents the length of the image sequence. Dots are placed at the image number in the sequence corresponding to the time point at which the melanoma diagnosis was made. Cross marks indicate the image number wherein the AI model gave a diagnosis that changed from melanoma to a benign lesion. The green bar denotes the correct diagnosis of benign lesions (best viewed while zoomed in).
+
+Both clinicians and the model had increased sensitivity and reduced specificity, but the reduction in specificity was more marked for the algorithm, as listed in Table III. Due to the dynamic changes in the serial lesions, both the clinicians and the algorithm altered their diagnoses over time with additional image information. These results suggest that lesions may develop abrupt changes that can result in a malignant diagnosis, but also may stabilize over time, leading clinicians and the algorithm to prefer a benign diagnosis. Examples of lesions correctly diagnosed by clinicians and incorrectly by the model (and vice versa) are shown in Fig. 11.
+To evaluate whether early melanoma recognition is possible, we also recorded the time point at which clinicians and the algorithm first made a malignant diagnosis in both melanoma and benign cases. As shown in Fig. 12, our model frequently gave a diagnosis of melanoma at earlier time points compared to clinicians with 54 (60.7%) melanomas detected by the algorithm on the first follow-up image, compared to 29 (32.7%) by clinicians. However, this phenomenon was also observed in benign cases (Fig. 13), with 42 (46.7%) benign lesions incorrectly diagnosed as melanoma by the model on the first follow-up image. Of the 34 invasive melanomas, the algorithm was able to correctly identify 25 melanomas, of which 24 were detected on the first sequential image (mean Breslow thickness 0.5 mm), and one melanoma was detected
+
+on the second sequential image (Breslow thickness 0.3 mm). For lesions that were not correctly identified by the algorithm, the mean Breslow thickness was 0.5 mm). As shown in Fig. 9, both clinicians and the model performed better in cases containing a longer sequence of images.
+V. DISCUSSION
+Sequential monitoring of melanocytic naevi is recommended for the monitoring of high-risk individuals to improve early detection and reduce unnecessary biopsies [5], [11]. Here, we demonstrate a model which incorporates information from dynamic changes detected from sequentially monitored melanocytic lesions to facilitate the prediction and early diagnosis of melanoma.
+In previous studies of single time point melanocytic lesions, computer algorithms have demonstrated a sensitivity ranging from 82.0% to 97.1% and specificity ranging from 60.0% to 78.8% [15], [66]­[68]. In these previous studies, diagnostic performance was compared with dermatologists whose sensitivity ranged from 67.2% to 90.6% and specificity from 59.0% to 71.0% [15], [66]­[68]. In our results, lower sensitivity and specificity values were expected compared to other studies of single time point melanocytic lesions [15], [66]­[68] because our dataset was more challenging, consisting of sequentially monitored lesions in high-risk individuals whose lesions were
+
+12
+
+IEEE TRANSACTIONS ON MEDICAL IMAGING, VOL. XX, NO. XX, XXXX 2017
+
+all ultimately excised. The image dataset included melanomas with subtle architectural changes to atypical benign lesions which displayed significant transformations, that is clinically atypical lesions that were confirmed as benign on histopathology, but which showed changes suspicious for melanoma over time. Despite this, our model's performance was superior to that of experienced clinicians, at least under the test conditions. It is worth noting that all lesions were ultimately excised, and thus, the true sensitivity of clinicians is, in fact, much higher. The model's superior specificity, however, suggests that unnecessary excision of benign lesions may be avoided in some cases.
+Additionally, our model was able to detect melanoma earlier than clinicians, which provides proof of concept for the algorithm's function as a prognostic tool to improve early detection. Based on this, in the future we aim to identify computer generated biomarkers that can categorize melanocytic lesions into high and low risk of evolving into melanoma over time. Low-risk lesions would not require ongoing monitoring, whereas high-risk lesions would require closer dermoscopic surveillance or excision. The algorithm could also play a useful role in providing an additional diagnostic opinion to augment that of clinicians.
+Despite the model's overall superior diagnostic performance, clinicians were able to diagnose a higher proportion of invasive melanoma (67.9%) compared to the model (61.8%). Additionally, our model showed poorer accuracy for small lesions or those with undefined borders. A larger training dataset is likely to improve model performance, with greater exposure to these types of lesions. Currently, however, the use of the algorithm on a wide range of lesions with different morphologies is limited, which may in part explain why there was no clear correlation between the difficulty of cases determined by the clinician's responses and the accuracy of the model. Although the algorithm was able to correctly identify some `difficult' lesions, the inverse was also true. It is important to understand which lesions may be misclassified by an algorithm so that clinicians are not led astray by the algorithm. There is a significant body of work to improve transparency of algorithms for precisely this reason [69].
+There are some limitations in the interpretation of our study's results. First, the clinicians' assessment would not have been reflective of the real-life clinical setting. Clinicians in this study reviewed the images in an artificial environment without the context of the individual's broader naevus ecosystem. Other valuable information related to melanoma risk (e.g., family history, past history, other phenotypic features) may impact diagnostic accuracy and the decision to excise a lesion [10], [17]. Additionally, our study included a balanced dataset of benign and malignant lesions which is useful in the training and evaluation of the algorithm; however, in the real clinical world, a very small percentage of the monitored lesions will be melanoma. Therefore, we acknowledge that a dataset enriched for malignancy, such as ours, will artificially enhance accuracy compared to real-world performance. Further validation of our study's results with a larger prospective dataset as well as evaluation of the algorithm's performance in a clinical setting is necessary. Regardless, we have demonstrated novel methods
+
+to train deep neural networks to monitor high-risk lesions with results that could revolutionise the approach to melanoma surveillance and screening.
+VI. CONCLUSION
+In this study, we present a framework for early melanoma diagnosis by modelling lesion growth using sequential dermoscopic images. We demonstrate the benefit of incorporating temporal clues in melanoma diagnosis, and demonstrate the superiority of the proposed method in capturing lesion changes from serial images for early melanoma detection, compared to other sequence models. In addition, we compare diagnostic performance of our algorithm to that of 12 clinicians. The result suggests that the algorithm is capable of consistently identifying melanoma at a clinicians' standard, without the risk of over-reporting benign lesions. Additionally, the proposed model can predict melanoma earlier than can clinicians, which provides a proof of concept for the algorithm's function as both a diagnostic and prognostic tool. Our approach has the potential to assist clinicians in more effective dermoscopic monitoring of high-risk patients. The benefits include reducing excessive screening by discontinuing sequential monitoring of benign lesions with a low probability of malignant transformation and potentially aiding more timely excision of lesions prior to an invasive malignant process.
+REFERENCES
+[1] D. S. Rigel, J. Russak, and R. Friedman, "The evolution of melanoma diagnosis: 25 years beyond the abcds," CA: a cancer journal for clinicians, vol. 60, no. 5, pp. 301­316, 2010.
+[2] R. M. MacKie, Malignant melanoma: a guide to early diagnosis. University of Glasgow, 1989.
+[3] N. R. Abbasi, H. M. Shaw, D. S. Rigel, R. J. Friedman, W. H. McCarthy, I. Osman, A. W. Kopf, and D. Polsky, "Early diagnosis of cutaneous melanoma: revisiting the abcd criteria," Jama, vol. 292, no. 22, pp. 2771­ 2776, 2004.
+[4] D. Schadendorf, D. E. Fisher, C. Garbe, J. E. Gershenwald, J.-J. Grob, A. Halpern, M. Herlyn, M. A. Marchetti, G. McArthur, A. Ribas et al., "Melanoma," Nature reviews Disease primers, vol. 1, no. 1, pp. 1­20, 2015.
+[5] G. Salerni, C. Carrera, L. Lovatto, J. A. Puig-Butille, C. Badenas, E. Plana, S. Puig, and J. Malvehy, "Benefits of total body photography and digital dermatoscopy ("two-step method of digital follow-up") in the early diagnosis of melanoma in patients at high risk for melanoma," Journal of the American Academy of Dermatology, vol. 67, no. 1, pp. e17­e27, 2012.
+[6] J. Malvehy and S. Puig, "Follow-up of melanocytic skin lesions with digital total-body photography and digital dermoscopy: a two-step method," Clinics in dermatology, vol. 20, no. 3, pp. 297­304, 2002.
+[7] C. Rosendahl, G. Williams, D. Eley, T. Wilson, G. Canning, J. Keir, I. McColl, and D. Wilkinson, "The impact of subspecialization and dermatoscopy use on accuracy of melanoma diagnosis among primary care doctors in australia," Journal of the American Academy of Dermatology, vol. 67, no. 5, pp. 846­852, 2012.
+[8] H. Rajgopal Bala, Y. Pan, and R. L. Nixon, "The dangers of non-medical laser therapy for pigmented lesions," The Medical Journal of Australia, vol. 206, no. 5, p. 229, 2017.
+[9] R. Pampena, G. Pellacani, and C. Longo, "Nevus-associated melanoma: patient phenotype and potential biological implications," Journal of Investigative Dermatology, vol. 138, no. 8, pp. 1696­1698, 2018.
+[10] H. A. Haenssle, N. Mograby, A. Ngassa, T. Buhl, S. Emmert, M. P. Scho¨n, A. Rosenberger, and H. P. Bertsch, "Association of patient risk factors and frequency of nevus-associated cutaneous melanomas," JAMA dermatology, vol. 152, no. 3, pp. 291­298, 2016.
+[11] H. Kittler, P. Guitera, E. Riedl, M. Avramidis, L. Teban, M. Fiebiger, R. A. Weger, M. Dawid, and S. Menzies, "Identification of clinically featureless incipient melanoma using sequential dermoscopy imaging," Archives of dermatology, vol. 142, no. 9, pp. 1113­1119, 2006.
+
+

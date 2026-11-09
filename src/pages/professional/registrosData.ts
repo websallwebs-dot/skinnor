@@ -227,7 +227,7 @@ export const REGISTROS_FOTOS: RegistroFoto[] = [
     color: '3 tonos',
     estado: 'Segmentación',
     estadoColor: 'bg-[#fafcfa] text-[#0c1512] border-[#d8e0dc]',
-    autor: 'Red Neuronal SkinNor v2.4',
+    autor: 'Red Neuronal Skinnor v2.4',
     calidad: '100% (Matriz 512x512)',
     dispositivo: 'ISIC Backbone PyTorch',
     roi: '100%',

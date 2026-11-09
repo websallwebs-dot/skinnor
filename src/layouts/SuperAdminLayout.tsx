@@ -52,7 +52,7 @@ export default function SuperAdminLayout() {
             <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
               HQ
             </div>
-            <span className="text-lg tracking-tight font-bold">SkinNor</span>
+            <span className="text-lg tracking-tight font-bold">Skinnor</span>
           </div>
           <Badge className="bg-slate-900 text-white text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5">
             Super Admin

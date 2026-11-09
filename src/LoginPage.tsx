@@ -41,7 +41,7 @@ export default function LoginPage() {
         <CardHeader className="space-y-2 items-center pt-8 pb-4">
           <div className="flex items-center gap-2 font-semibold text-[#0d7a63]">
             <Activity className="h-8 w-8" />
-            <span className="text-2xl font-bold tracking-tight">SkinNor</span>
+            <span className="text-2xl font-bold tracking-tight">Skinnor</span>
           </div>
           <CardTitle className="text-xl font-bold text-slate-900">Ecosistema Multi-Tenant Teledermatológico</CardTitle>
           <CardDescription className="text-center text-slate-500 text-xs">

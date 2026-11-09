@@ -1,0 +1,255 @@
+1. Arch Dermatol. 2008 Apr;144(4):502-6. doi: 10.1001/archderm.144.4.502.
+
+Assessment of the optimal interval for and sensitivity of short-term sequential 
+digital dermoscopy monitoring for the diagnosis of melanoma.
+
+Altamura D(1), Avramidis M, Menzies SW.
+
+Author information:
+(1)Sydney Melanoma Diagnostic Centre, Sydney Cancer Centre, Royal Prince Alfred 
+Hospital, Camperdown, New South Wales, Australia.
+
+Comment in
+    Arch Dermatol. 2008 Apr;144(4):533-4. doi: 10.1001/archderm.144.4.533.
+
+OBJECTIVE: To determine whether 6 weeks could replace 3 months for short-term 
+sequential digital dermoscopy imaging (ST-SDDI) of suspicious melanocytic 
+lesions and determine the proportion of melanomas missed.
+DESIGN: Consecutive lesions (n = 2602) undergoing ST-SDDI monitored from 1859 
+patients were included. Half of the patients underwent 6-week monitoring 
+followed by 3-month monitoring (range, 2.5-4.5 months) if changes were not seen. 
+The remainder underwent 3-month monitoring only. Any change during this time led 
+to excision. Lesions unchanged were then followed up over time.
+SETTING: A tertiary referral institution.
+MAIN OUTCOME MEASURES: The proportion of changed melanomas (sensitivity) and 
+odds ratios (ORs) for melanoma of changed lesions.
+RESULTS: Eighty-one melanomas were detected using ST-SDDI (Breslow thickness: 
+median, in situ; maximum, 0.8 mm). Of 39 melanomas detected using ST-SDDI in the 
+6-week monitored lesions, 27 (69%) were detected at 6 weeks and 12 (31%) at 3 
+months. The OR for melanoma for a lesion changing at 6 weeks was 19 (95% 
+confidence interval [CI], 10-35), and the overall OR for melanoma for a lesion 
+changing during the short-term monitoring period (6 weeks to 4.5 months) was 47 
+(95% CI, 23-94). For lesions remaining unchanged at 3 months, 99.2% (1118 of 
+1127 lesions) were shown to be benign as defined by an unremarkable further 
+follow-up. Seventy-five percent (15 of 20) of the lentigo maligna melanomas, 93% 
+(40 of 43) of other in situ melanomas, and 96% (26 of 27) of the invasive 
+melanomas were detected using ST-SDDI. Conclusion Three months remains the 
+standard interval for ST-SDDI, where the sensitivity for the diagnosis of 
+melanoma for changed (non-lentigo maligna) lesions is high but not 100%.
+
+DOI: 10.1001/archderm.144.4.502
+PMID: 18427044 [Indexed for MEDLINE]
+
+
+2. Arch Dermatol. 2006 Sep;142(9):1113-9. doi: 10.1001/archderm.142.9.1113.
+
+Identification of clinically featureless incipient melanoma using sequential 
+dermoscopy imaging.
+
+Kittler H(1), Guitera P, Riedl E, Avramidis M, Teban L, Fiebiger M, Weger RA, 
+Dawid M, Menzies S.
+
+Author information:
+(1)Division of General Dermatology, Department of Dermatology, University of 
+Vienna Medical School, Waehringerguertel 18-20, A-1090 Vienna, Austria. 
+harald.kittler@meduniwien.ac.at
+
+Comment in
+    Arch Dermatol. 2006 Sep;142(9):1211-2. doi: 10.1001/archderm.142.9.1211.
+    Arch Dermatol. 2007 Jun;143(6):805; author reply 805-6. doi: 
+10.1001/archderm.143.6.805-a.
+
+OBJECTIVES: To examine the role of sequential dermoscopy imaging in detecting 
+incipient melanoma and to elucidate the impact of length of follow-up on the 
+relevance of observed changes.
+DESIGN: Baseline and follow-up images of melanomas and melanocytic nevi excised 
+only because of changes across time were inspected on a computer screen and 
+assessed according to prospectively defined criteria. Lesions were stratified 
+into 3 groups according to the length of follow-up.
+SETTING: Three hospital-based referral centers in Europe and Australia. Patients 
+Four hundred sixty-one patients selected for digital dermoscopy monitoring.
+MAIN OUTCOME MEASURES: Description and comparison of dermoscopy features and 
+changes in melanomas and melanocytic nevi at baseline and after follow-up.
+RESULTS: We inspected baseline and follow-up images of 499 melanocytic skin 
+lesions from 461 patients. The histopathologic diagnosis was melanoma in 91 
+cases and melanocytic nevus in 408. Most melanomas (58.2%; n = 53) were in situ, 
+and the median thickness of invasive melanomas was 0.38 mm. Dermoscopy features 
+of melanomas and nevi did not differ significantly at baseline. After follow-up 
+of 1.5 to 4.5 months, 61.8% of the melanomas showed no specific dermoscopy 
+features for melanoma. This value declined to 45.0% after follow-up of 4.5 to 
+8.0 months and to 35.1% after more than 8.0 months. We could not differentiate 
+melanomas and changing nevi by means of observed changes or dermoscopy features 
+when follow-up was shorter than 4.5 months. With longer follow-up, melanomas 
+tended to enlarge asymmetrically with architectural and color changes, and nevi 
+tended to enlarge symmetrically without architectural and color changes.
+CONCLUSIONS: Sequential dermoscopy imaging detects incipient melanomas when they 
+are still featureless. Interpretation of changes observed during follow-up 
+depends on the length of follow-up.
+
+DOI: 10.1001/archderm.142.9.1113
+PMID: 16982998 [Indexed for MEDLINE]
+
+
+3. Arch Dermatol. 2001 Dec;137(12):1583-9. doi: 10.1001/archderm.137.12.1583.
+
+Short-term digital surface microscopic monitoring of atypical or changing 
+melanocytic lesions.
+
+Menzies SW(1), Gutenev A, Avramidis M, Batrac A, McCarthy WH.
+
+Author information:
+(1)Sydney Melanoma Unit, Melanoma and Skin Cancer Unit, Department of Surgery, 
+University of Sydney, Australia. scott@mel.rpa.cs.nsw.gov.au
+
+Comment in
+    Arch Dermatol. 2001 Dec;137(12):1641-4. doi: 10.1001/archderm.137.12.1641.
+    Arch Dermatol. 2002 Oct;138(10):1378-9. doi: 10.1001/archderm.138.10.1378-b.
+
+OBJECTIVE: To examine the outcome of short-term digital surface microscopic 
+monitoring of suspicious or changing atypical melanocytic lesions.
+DESIGN: Digital surface microscopic (oil epiluminescence microscopy, and 
+dermoscopy) images of clinically melanocytic lesions were taken with a color 
+calibrated 3 CCD video instrument. In general, lesions were moderately atypical, 
+flat or only slightly raised, without a history of change or surface microscopic 
+evidence of melanoma, or were mildly atypical lesions with a history of change. 
+Lesions were monitored during a 2.5- to 4.5-month period (median, 3.0 months). 
+With the exception of overall change in pigmentation consistent with that seen 
+in surrounding skin (solar exposure changes), any morphologic change after 
+monitoring was considered an indication to excise.
+SETTING: Sydney Melanoma Unit, Sydney, Australia (a referral center).
+PATIENTS: A consecutive sample of 318 lesions from 245 patients (aged 4-81 
+years).
+MAIN OUTCOME MEASURE: Specificity for the diagnosis of melanoma.
+RESULTS: Of the 318 lesions, 81% remained unchanged. Of the 61 lesions that 
+showed morphologic changes, 7 (11% of changed and 2% of total lesions) were 
+found to be early melanoma (5 in situ and 2 invasive with a Breslow thickness of 
+0.25 mm and 0.28 mm, respectively). None of these melanomas developed any 
+classic surface microscopic features of melanoma and therefore could be 
+identified only by morphologic change. The specificity for the diagnosis of 
+melanoma by means of short-term digital monitoring was 83%.
+CONCLUSION: On the assumption that all melanoma will change during the monitored 
+period, surface microscopy digital monitoring is a useful adjunct for the 
+management of melanocytic lesions.
+
+DOI: 10.1001/archderm.137.12.1583
+PMID: 11735708 [Indexed for MEDLINE]
+
+
+4. Arch Dermatol. 2005 Feb;141(2):155-60. doi: 10.1001/archderm.141.2.155.
+
+Limitations of dermoscopy in the recognition of melanoma.
+
+Skvara H(1), Teban L, Fiebiger M, Binder M, Kittler H.
+
+Author information:
+(1)Department of Dermatology, Division of General Dermatology, University of 
+Vienna Medical School, Vienna, Austria.
+
+Comment in
+    Arch Dermatol. 2005 Feb;141(2):209-11. doi: 10.1001/archderm.141.2.209.
+
+OBJECTIVE: To compare dermoscopic features of melanocytic nevi with those of 
+early melanomas that were not excised initially because of their 
+uncharacteristic clinical and dermoscopic appearance.
+DESIGN: Retrospective study of the baseline images of 325 melanocytic skin 
+lesions that were observed by digital dermoscopy and finally excised because of 
+changes over time.
+SETTING: A dermatologic clinic and a dermatologic department at a university 
+hospital.
+MAIN OUTCOME MEASURES: Comparison of baseline images of melanomas and 
+melanocytic nevi by pattern analysis, the ABCD rule of dermoscopy, and the 
+7-point checklist.
+RESULTS: Baseline dermoscopic images of 262 melanocytic nevi and 63 melanomas 
+from 315 patients were included in the analysis. The patterns of dermoscopic 
+features observed in the baseline images of melanocytic lesions finally 
+diagnosed as melanomas during follow-up did not differ substantially from the 
+patterns observed in the baseline images of melanocytic nevi. Pattern analysis, 
+the ABCD rule of dermoscopy, and the 7-point checklist failed to achieve 
+adequate diagnostic accuracy for melanoma. In retrospect, no dermoscopic feature 
+or pattern of features could be identified that reliably differentiated between 
+melanomas and melanocytic nevi at the time of the first presentation.
+CONCLUSION: Dermoscopy depends on the appearance of classic dermoscopic features 
+and is therefore limited in the diagnosis of very early and mainly featureless 
+melanomas.
+
+DOI: 10.1001/archderm.141.2.155
+PMID: 15724011 [Indexed for MEDLINE]
+
+
+5. Australas J Dermatol. 2023 Feb;64(1):67-79. doi: 10.1111/ajd.13975. Epub 2023 
+Jan 18.
+
+Evaluation of dynamic dermoscopic features of melanoma and benign naevi by 
+sequential digital dermoscopic imaging and total body photography in a high-risk 
+Australian cohort.
+
+Nguyen J(1), Doolan BJ(1)(2), Pan Y(1)(3), Vestergaard T(4), Paul E(5), McLean 
+C(6), Haskett M(7), Kelly J(1)(3), Mar V(1)(8), Chamberlain A(1)(3).
+
+Author information:
+(1)Victorian Melanoma Service, Alfred Health, Victoria, Melbourne, Australia.
+(2)St John's Institute of Dermatology, Guy's and St. Thomas' NHS Foundation 
+Trust, London, UK.
+(3)Central Clinical School, Monash University (Alfred Health Campus), Victoria, 
+Melbourne, Australia.
+(4)Department of Dermatology and Allergy Centre, Odense University Hospital, 
+Odense, Denmark.
+(5)Department of Epidemiology and Preventive Medicine, School of Public Health 
+and Preventive Medicine, Monash University, Victoria, Melbourne, Australia.
+(6)Department of Anatomical Pathology, Alfred Health, Victoria, Melbourne, 
+Australia.
+(7)MoleMap by Dermatologists, Victoria, South Melbourne, Australia.
+(8)School of Public Health and Preventive Medicine, Monash University, Victoria, 
+Melbourne, Australia.
+
+Comment in
+    Australas J Dermatol. 2023 Aug;64(3):e303-e304. doi: 10.1111/ajd.14128.
+
+BACKGROUND/OBJECTIVES: Sequential digital dermoscopic imaging (SDDI) and total 
+body photography (TBP) are recommended as a two-step surveillance method for 
+individuals at high-risk of developing cutaneous melanoma. Dermoscopic features 
+specific to melanoma have been well described, however, dynamic changes on 
+serial imaging are less understood. This study aims to identify and compare 
+dermoscopic features in developing melanomas and benign naevi that underwent 
+SDDI and TBP to understand which dermoscopic features may be associated with a 
+malignant change.
+METHOD: Histopathology reports from a private specialist dermatology clinic from 
+January 2007 to December 2019 were reviewed. Histopathologically confirmed 
+melanoma and benign naevi that underwent SDDI and TBP with a minimum follow-up 
+interval of 3 months were included.
+RESULTS: Eighty-nine melanomas (38.2% invasive, median Breslow thickness 
+0.35 mm, range: 0.2-1.45 mm) and 48 benign naevi were evaluated by three 
+experienced dermatologists for dermoscopic changes. Features most strongly 
+associated with melanoma included the development of neovascularisation, 
+asymmetry and growth in pigment network, additional colours, shiny white 
+structures, regression, structureless areas and change to a multi-component 
+pattern. The presence of atypical vessels (p = 0.02) and shiny white structures 
+(p = 0.02) were significantly associated with invasive melanoma.
+CONCLUSION: Evaluation for certain evolving dermoscopic features in melanocytic 
+lesions monitored by SDDI and TBP is efficient in assisting clinical decision 
+making. SDDI with TBP is an effective tool for early detection of melanoma.
+
+© 2023 The Australasian College of Dermatologists.
+
+DOI: 10.1111/ajd.13975
+PMID: 36652275 [Indexed for MEDLINE]
+
+
+6. Australas J Dermatol. 2023 Aug;64(3):e303-e304. doi: 10.1111/ajd.14128. Epub 
+2023 Jul 5.
+
+A reply to 'Evaluation of dynamic dermoscopic features of melanoma and benign 
+naevi by sequential digital dermoscopic imaging and total body photography in a 
+high-risk Australian cohort'.
+
+Gonzalez Matheus G(1), Muir J(1)(2).
+
+Author information:
+(1)Mater Hospital, South Brisbane, Queensland, Australia.
+(2)South East Dermatology, Annerley, Queensland, Australia.
+
+Comment on
+    Australas J Dermatol. 2023 Feb;64(1):67-79. doi: 10.1111/ajd.13975.
+
+DOI: 10.1111/ajd.14128
+PMID: 37559201 [Indexed for MEDLINE]

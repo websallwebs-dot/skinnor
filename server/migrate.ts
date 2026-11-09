@@ -31,6 +31,16 @@ export async function migrate() {
   } catch {
     // columna ya existe
   }
+  try {
+    dbExec('ALTER TABLE seguimientos ADD COLUMN tamano_mm REAL');
+  } catch {
+    // columna ya existe
+  }
+  try {
+    dbExec('ALTER TABLE lesion_analisis ADD COLUMN viz BLOB');
+  } catch {
+    // columna ya existe
+  }
   console.log('Migración ejecutada: esquema SQLite creado/actualizado');
 }
 

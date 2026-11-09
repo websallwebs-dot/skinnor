@@ -28,7 +28,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from '@/components/ui/badge';
 
 export default function ProfessionalLayout() {
   const { logout, user } = useAuth();
@@ -53,13 +52,7 @@ export default function ProfessionalLayout() {
       {/* Top Header matching image */}
       <header className="sticky top-0 z-30 flex h-16 items-center border-b border-[#d8e0dc] bg-white px-4 shadow-xs sm:px-6">
         <div className="flex items-center gap-2 font-semibold text-[#0c1512]">
-          <span className="text-xl tracking-tight font-bold">SkinNor</span>
-          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px] uppercase font-semibold">
-            Profesional
-          </Badge>
-          <span className="hidden md:inline text-xs text-slate-500 ml-2">
-            {user?.tenantName || 'Clínica Dermatológica Santa María'}
-          </span>
+          <span className="text-xl tracking-tight font-bold">Skinnor</span>
         </div>
         
         <div className="ml-auto flex items-center gap-3">
@@ -83,9 +76,6 @@ export default function ProfessionalLayout() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/pro/configuracion')}>
                   Configuración & Perfil
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/clinic')}>
-                  Panel de Administración Clínica
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />

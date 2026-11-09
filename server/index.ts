@@ -27,6 +27,8 @@ import consultasRoutes from './routes/consultas';
 import profesionalesRoutes from './routes/profesionales';
 import casosEstudioRoutes from './routes/casos-estudio';
 import similaresRoutes from './routes/similares';
+import datasetsRoutes from './routes/datasets';
+import analisisRoutes from './routes/analisis';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/pacientes', pacientesRoutes);
@@ -41,6 +43,8 @@ app.use('/api/consultas', consultasRoutes);
 app.use('/api/profesionales', profesionalesRoutes);
 app.use('/api/casos-estudio', casosEstudioRoutes);
 app.use('/api/similares', similaresRoutes);
+app.use('/api/datasets', datasetsRoutes);
+app.use('/api/lesiones', analisisRoutes);
 app.use('/api/superadmin', superadminRoutes);
 app.use('/api', exportImportRoutes);
 

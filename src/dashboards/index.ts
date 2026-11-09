@@ -1,5 +1,5 @@
 /**
- * SkinNor Multi-Tenant Dashboard Modules
+ * Skinnor Multi-Tenant Dashboard Modules
  * Organized by Role & Domain Architecture
  */
 

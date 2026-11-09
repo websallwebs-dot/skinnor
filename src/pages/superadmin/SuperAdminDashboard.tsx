@@ -81,7 +81,7 @@ export default function SuperAdminDashboard({
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span className="text-xs font-semibold uppercase tracking-wider text-emerald-800">
-              Plataforma Multi-Tenant SkinNor Core Operativa
+              Plataforma Multi-Tenant Skinnor Core Operativa
             </span>
             <Badge variant="outline" className="text-xs bg-slate-50 text-slate-700 border-slate-200">
               Cluster US-East (Cloud Run & GPU Nodes)

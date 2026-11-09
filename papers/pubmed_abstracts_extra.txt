@@ -1,0 +1,543 @@
+1. Arch Dermatol. 2005 Aug;141(8):1008-14. doi: 10.1001/archderm.141.8.1008.
+
+Comparative performance of 4 dermoscopic algorithms by nonexperts for the 
+diagnosis of melanocytic lesions.
+
+Dolianitis C(1), Kelly J, Wolfe R, Simpson P.
+
+Author information:
+(1)Victorian Melanoma Service, Department of Dermatology, Alfred Hospital, 
+Melbourne, Victoria, Australia. constantinos1@optusnet.com.au
+
+OBJECTIVE: To assess 4 dermoscopy methods in a nonexpert setting.
+DESIGN: Sixty-one medical practitioners, mainly primary care physicians in 
+Australia, were trained in 4 dermoscopy algorithms. Participants then assessed 
+macroscopic and dermoscopic images of 40 melanocytic skin lesions. Each of the 
+dermoscopic images was assessed with pattern analysis, the 7-point checklist, 
+the ABCD rule, and the Menzies method.
+RESULTS: The Menzies method showed the highest sensitivity, 84.6%, for the 
+diagnosis of melanoma, followed by the 7-point checklist (81.4%), the ABCD rule 
+(77.5%), pattern analysis (68.4%), and assessment of a macroscopic image 
+(60.9%). Pattern analysis and assessment of the macroscopic image showed the 
+highest specificity, 85.3% and 85.4%, respectively. The ABCD rule showed a 
+specificity of 80.4%; the Menzies method, 77.7%; and the 7-point checklist, 73%. 
+The Menzies method had a diagnostic accuracy of 81.1%; the ABCD rule, 79.0%; the 
+7-point checklist, 77.2%; pattern analysis, 76.8%; and clinical assessment, 
+73.2%.
+CONCLUSIONS: All algorithms performed well in the hands of relatively inexpert 
+practitioners who had undertaken self-guided training provided on compact disc. 
+The Menzies method showed the highest diagnostic accuracy and sensitivity for 
+melanoma diagnosis and was preferred by study participants.
+
+DOI: 10.1001/archderm.141.8.1008
+PMID: 16103330 [Indexed for MEDLINE]
+
+
+2. J Cancer Educ. 2022 Dec;37(6):1579-1588. doi: 10.1007/s13187-021-02118-8. Epub
+ 2022 Jan 18.
+
+Educational Interventions to Support Primary Care Provider Performance of 
+Diagnostic Skin Cancer Examinations: A Systematic Literature Review.
+
+Posada EL(1)(2), Lauck KC(3), Tran T(4), Krause KJ(2), Nelson KC(5).
+
+Author information:
+(1)The University of Texas Health Science Center at Houston School of Public 
+Health, Houston, TX, USA.
+(2)The University of Texas MD Anderson Cancer Center, Houston, TX, USA.
+(3)Department of Internal Medicine, The University of Texas Health Science 
+Center, Houston, TX, USA.
+(4)Department of Dermatology, The University of Texas MD Anderson Cancer Center, 
+Houston, TX, USA.
+(5)Department of Dermatology, The University of Texas MD Anderson Cancer Center, 
+Houston, TX, USA. kcnelson1@mdanderson.org.
+
+To our knowledge, there is no available standardized educational curriculum 
+designed to promote the incorporation of skin cancer examinations and procedures 
+into general practice. To explore the contemporary training landscape, we 
+conducted a systematic review of educational interventions designed to support 
+skin cancer diagnostic examinations by primary care providers (PCPs). Our review 
+uniquely encompasses all PCPs, including practicing physicians, residents, and 
+advanced practice practitioners (APPs). The objective of this study is to review 
+and synthesize worldwide data on educational interventions addressing PCP 
+performance of skin cancer diagnostic examinations. A systematic review was 
+performed in MEDLINE, Cochrane, EMBASE, and Scopus for English language articles 
+worldwide published from 2000 onwards. Articles were screened for eligibility, 
+and possibly overlapping datasets were resolved. Data extracted included 
+curriculum content, delivery format, and educational outcomes. This review 
+followed the PRISMA guidelines. A total of 63 studies were selected for data 
+inclusion with one addressing training for resident physicians, 4 for APPs, and 
+the remainder for practicing physicians. Educational interventions included in 
+this review reflect the pre-SARS-CoV-2 pandemic educational environment: half 
+provided live/synchronous instruction of about 5-h duration on average, and a 
+quarter featured interactive components. Less than a quarter of interventions 
+included practice change as a specific reported outcome. Without sustainable 
+practice change, the anticipated long-term benefits of early cancer detection in 
+patients remain limited. Previous and existing educational interventions 
+designed to support skin cancer detection by PCPs demonstrate heterogeneous 
+curriculum content, delivery methods, and educational outcomes. An ideal 
+intervention would teach consensus-derived clinical competencies, provide 
+meaningful learner feedback, and measure outcomes, such as knowledge/competency, 
+confidence/attitudes, and practice change, using validated instruments.
+
+© 2021. The Author(s) under exclusive licence to American Association for Cancer 
+Education.
+
+DOI: 10.1007/s13187-021-02118-8
+PMCID: PMC8763425
+PMID: 35040018 [Indexed for MEDLINE]
+
+Conflict of interest statement: The authors declare no competing interests.
+
+
+3. J Cancer Res Clin Oncol. 2026 Jul 31;152(10):207. doi: 
+10.1007/s00432-026-06519-4.
+
+Artificial intelligence (AI) in melanocytic lesions diagnosis: a systematic 
+review of methods incorporating ABCD(E)-derived features.
+
+Lopes OMS(1), Oliveira JA(2), Nogueira VBA(3), Ribeiro LF(2), Zamae MIS(4), 
+Vieira MFGO(3), Dantas E Pimenta VM(5), Reis ZSN(6).
+
+Author information:
+(1)Federal University of Minas Gerais, Av. Prof. Alfredo Balena, 190 - Santa 
+Efigênia, Belo Horizonte, Minas Gerais, 30130-100, Brazil. 
+otto.plastica@gmail.com.
+(2)Federal University of Minas Gerais, Av. Prof. Alfredo Balena, 190 - Santa 
+Efigênia, Belo Horizonte, Minas Gerais, 30130-100, Brazil.
+(3)Universidade José do Rosário Vellano, Belo Horizonte, Minas Gerais, Brazil.
+(4)Instituto Nacional do Câncer, Rio de Janeiro, Brazil.
+(5)Faculdade de Ciências Médicas de Ipatinga, Ipatinga, Minas Gerais, Brazil.
+(6)Department of Gynecology and Obstetrics, Federal University of Minas Gerais, 
+Belo Horizonte, Brazil.
+
+Melanoma has a growing incidence, and early and accurate detection can enhance 
+survival rates. However, its complex diagnoses pose challenges that could be 
+overcome by Artificial Intelligence (AI), and the ABCD(E) rule (Asymmetry, 
+Border irregularity, Color variegation, Diameter, and Evolution) is a major 
+screening pattern enabling melanoma detection. This systematic review assessed 
+advancements in Artificial Intelligence (AI) for melanoma diagnosis, 
+particularly focusing on systems incorporating or informed by ABCD(E) criteria. 
+Guided by Cochrane and PRISMA guidelines, this review included experimental or 
+observational studies indexed on PubMed, LILACS, Latindex, and Cochrane Central 
+Register of Controlled Trials platforms. Independent screening and data 
+extraction were performed by two authors. 2,735 records were assessed and 21 
+studies were included in the final screening, analyzing over 90,000 
+images/cases. AI systems, notably CNNs and DCNNs, demonstrated promising 
+diagnostic performance, often matching or exceeding human expert evaluation, 
+achieving an Area Under the Curve (AUC) of 90.3% for early melanoma 
+differentiation. Patient selection bias was observed, limiting applicability of 
+the findings. AI shows significant and evolving capability in skin lesion 
+diagnosis, increasingly integrating ABCD(E) criteria. While offering enhanced 
+diagnostic consistency, challenges persist, including data limitations, model 
+generalizability, and interpretability.
+
+© 2026. The Author(s).
+
+DOI: 10.1007/s00432-026-06519-4
+PMCID: PMC13713948
+PMID: 42946891 [Indexed for MEDLINE]
+
+Conflict of interest statement: Declarations. Conflict of interest: The authors 
+declare no competing interests. Clinical trial registration: Does not apply for 
+systematic reviews and metaanalysis. Ethics approval: Does not apply for 
+systematic reviews and meta-analysis. International Prospective Register of 
+Systematic Reviews (PROSPERO) registry: CRD420251151405. Patient consent: Does 
+not apply for systematic reviews and meta-analysis. Permission to reproduce 
+material from other sources: Does not apply for systematic reviews and 
+meta-analysis. No content was reproduced.
+
+
+4. Front Oncol. 2026 Aug 21;16:1885137. doi: 10.3389/fonc.2026.1885137.
+eCollection  2026.
+
+Visual and lesion descriptor fusion using cross-attention for skin disease 
+diagnosis.
+
+Afzal M(1), Shah JH(1), Saleem R(2), Younas MU(1), Tahir A(3), Saeed MES(4).
+
+Author information:
+(1)Department of Computer Science, COMSATS University Islamabad, Wah 
+Cantt, Pakistan.
+(2)Department of Information Technology, Government College University 
+Faisalabad, Faisalabad, Pakistan.
+(3)Department of Computer Science, College of Engineering and Computer Science, 
+Jazan University, Jazan, Saudi Arabia.
+(4)Department of Computer Science, Nile Valley University, Khartoum, Sudan.
+
+INTRODUCTION: Accurate and early diagnosis of skin disease remains a significant 
+challenge in clinical dermatology due to variation in skin tones and visual 
+similarity among disease lesion types. Dermatologists rely on both clinical 
+expertise and advanced diagnostic tools to achieve reliable diagnosis. To assist 
+in the early diagnosis, many researchers have proposed traditional computer 
+vision methods; however, these approaches remain limited due to the wide range 
+of conditions and the overlapping of early-stage symptoms. Recognizing these 
+limitations, deep learning models have been explored to improve performance, but 
+they still face challenges in effective feature extraction and have weak 
+generalization due to limited datasets.
+METHODS: To address this, a cross-attention-based framework that integrates 
+visual with structured lesion descriptor derived from dermoscopic attributes is 
+proposed to enhance early-stage skin disease diagnosis. Visual features are 
+extracted using a fine-tuned transformer, while descriptor features are encoded 
+using BERT-based language models. Furthermore, the ISIC 2018 dataset is enriched 
+with structured lesion descriptors automatically generated from dermoscopic 
+images using the ABCD rule. The symptom descriptors provide semantic 
+representations for multimodal framework instead of an independent clinical 
+modality.
+RESULTS: The experimental results demonstrate that the proposed framework 
+outperforms well compared to unimodal baselines, where CNN-based methods 
+achieved 85% to 93% accuracy, while transformer-based pre-trained models reach 
+94.77%. In contrast, the proposed model achieves a peak accuracy of 96.87% 
+accuracy, which highlights its effectiveness for skin disease classification.
+DISCUSSION: Unlike the traditional image-only system, the proposed model 
+analyzed both visual features with their descriptive structured lesion 
+descriptors that enhance interpretability and provide clinically meaningful 
+diagnostic support.
+
+Copyright © 2026 Afzal, Shah, Saleem, Younas, Tahir and Saeed.
+
+DOI: 10.3389/fonc.2026.1885137
+PMCID: PMC13541541
+PMID: 42698561
+
+Conflict of interest statement: The author(s) declared that this work was 
+conducted in the absence of any commercial or financial relationships that could 
+be construed as a potential conflict of interest.
+
+
+5. Harefuah. 2024 Apr;163(4):252-258.
+
+[COMPREHENSIVE GUIDELINES AND INDICATIONS FOR DIGITAL MONITORING OF PATIENTS AT 
+HIGH-RISK FOR MELANOMA: A POSITION PAPER BY THE ISRAELI ASSOCIATION FOR 
+DERMATOLOGY].
+
+[Article in Hebrew]
+
+Reiter O(1), Miodovnik M(2), Avitan-Hersh E(3), Astman N(4), Nathanson N(5), 
+Rishpon A(6), Barzilai A(7), Scope A(8).
+
+Author information:
+(1)Dermatology Division, Rabin Medical Center, Petah Tikva, Sackler Faculty of 
+Medicine, Tel Aviv University, Tel Aviv.
+(2)Sackler Faculty of Medicine, Tel Aviv University, Tel Aviv, Dermatology 
+Division, Tel Aviv Medical Center, Tel Aviv, Oncology Department, Tel Aviv 
+Medical Center, Tel Aviv.
+(3)Dermatology Department, Rambam Medical Center and Technion Faculty of 
+Medicine, Haifa.
+(4)Sackler Faculty of Medicine, Tel Aviv University, Tel Aviv, Dermatology 
+Division, Sheba Medical Center, Tel Hashomer.
+(5)Dermatology Division, Sheba Medical Center, Tel Hashomer.
+(6)Sackler Faculty of Medicine, Tel Aviv University, Tel Aviv, Dermatology 
+Division, Tel Aviv Medical Center, Tel Aviv.
+(7)Sackler Faculty of Medicine, Tel Aviv University, Tel Aviv, Dermatology 
+Division, Sheba Medical Center, Tel Hashomer, Pathology Department, Sheba 
+Medical Center, Tel Hashomer.
+(8)Sackler Faculty of Medicine, Tel Aviv University, Tel Aviv, Kittner Skin 
+Cancer Screening and Research Institute, Sheba Medical Center, Tel Hashomer.
+
+INTRODUCTION: Early detection may lead to reduced morbidity and mortality from 
+melanoma. This study aims to establish guidelines for selecting patients 
+suitable for digital monitoring of skin lesions.
+METHODS: A literature review was conducted, followed by consensus among experts 
+appointed by the Israeli Dermatology Association.
+RESULTS: Two effective methods for early melanoma diagnosis were identified: 
+Total-body photography (TBP) and digital dermoscopy. TBP involves capturing 
+clinical images of the entire skin area for long-term monitoring (6-12 months). 
+Digital dermoscopy focuses on close-up images of distinct lesions for short-term 
+monitoring (3-4 months). Various risk factors for melanoma were identified, 
+including genetic and familial factors, as well as demographic and phenotypic 
+characteristics. Based on these risk factors and feasibility of clinical 
+follow-up, a comprehensive list of indications for TBP was developed, 
+categorized into three groups based on the expected level of benefit. Digital 
+dermoscopy surveillance is recommended for patients with flat or slightly raised 
+skin lesions showing dermoscopic features that do not definitively indicate 
+melanoma.
+DISCUSSION: TBP significantly improves early melanoma detection, enhancing 
+sensitivity and specificity while reducing unnecessary biopsies. However, due to 
+its high cost and limited coverage by the Israeli public health care system, 
+prioritizing patients who would benefit most from TBP is crucial. The compiled 
+list of indications aligns with international recommendations and provides 
+further details within the article.
+
+PMID: 38616637 [Indexed for MEDLINE]
+
+
+6. J Clin Med. 2026 Apr 6;15(7):2757. doi: 10.3390/jcm15072757.
+
+Clinical Impact of Routine HBV Screening in Oncologic Patients Prior to 
+Chemotherapy.
+
+Abu Sini H(1)(2), Shirron N(2), Litvak M(1)(2), Nasser R(1)(3)(4)(5), Abu Baker 
+F(1)(6), Hazzan R(7)(8), Haim N(1)(2), Saadi T(1)(3)(4).
+
+Author information:
+(1)Bruce Rappaport Faculty of Medicine, Technion-Israel Institute of Technology, 
+Haifa 3200003, Israel.
+(2)Division of Oncology, Rambam Health Care Campus, Haifa 3109601, Israel.
+(3)Liver Unit, Rambam Health Care Campus, Haifa 3109601, Israel.
+(4)Department of Gastroenterology, Rambam Health Care Campus, Haifa 3109601, 
+Israel.
+(5)Internal Medicine B, Rambam Health Care Campus, Haifa 3109601, Israel.
+(6)Department of Gastroenterology and Hepatology, Hillel Yaffe Medical Center, 
+Hadera 38100, Israel.
+(7)Clalit Health Services, Afula 1834111, Israel.
+(8)Azrieli Faculty of Medicine, Bar-Ilan University, Safed 1311502, Israel.
+
+Background: Hepatitis B virus (HBV) reactivation in oncology patients receiving 
+chemotherapy can cause severe hepatitis, including hepatic failure and death. 
+Universal HBV screening before chemotherapy initiation can reduce HBV-related 
+morbidity; however, screening practices vary widely, and guideline 
+recommendations continue to evolve. Objective: The aim of this study was to 
+evaluate the implementation of universal HBV screening in oncology patients and 
+its effectiveness in identifying active infection, prior exposure, and 
+individuals at risk for HBV reactivation. Methods: We implemented universal HBV 
+screening at Rambam Health Care Campus in January 2018 for all patients 
+initiating chemotherapy. This retrospective cohort study analyzed 1614 oncology 
+patients who underwent chemotherapy between January 2018 and April 2024. 
+Screening included testing for HBsAg, anti-HBc, and anti-HBs serology. HBV DNA 
+testing was performed in patients with positive HBsAg and/or anti-HBc serology. 
+Patients with known HBsAg positivity or those already receiving antiviral 
+therapy were excluded. Results: Of the screened patients, 16 (1.0%) were 
+HBsAg-positive, and 134 (8.3%) were HBsAg-negative/anti-HBc-positive. Detectable 
+HBV DNA was identified in four patients (3%) within the latter group. One 
+additional patient was classified as high risk for HBV reactivation based on the 
+planned chemotherapy regimen. Overall, 21 patients met criteria for prophylactic 
+antiviral therapy; however, prophylaxis was administered to only 17 patients. 
+Notably, when applying the 2015 ASCO guidelines, only a single patient within 
+the subgroup of HBsAg-negative, anti-HBc-positive, and HBV DNA-negative patients 
+would have qualified for HBV serologic screening based on chemotherapy-related 
+risk alone. Conclusions: Universal HBV screening prior to chemotherapy enables 
+the identification of patients with active or prior HBV infection who would not 
+have been detected using risk-based screening strategies alone. Our findings 
+further support the implementation of universal HBV screening in oncology 
+settings to prevent HBV reactivation and its potentially severe consequences.
+
+DOI: 10.3390/jcm15072757
+PMCID: PMC13073433
+PMID: 41977059
+
+Conflict of interest statement: The authors declare no conflicts of interest.
+
+
+7. Qual Life Res. 2025 Oct;34(10):2757-2771. doi: 10.1007/s11136-025-04030-w.
+Epub  2025 Jul 18.
+
+Quality-of-life measures in pharmacogenomic studies: a systematic review.
+
+Ng SC(1), He N(1), Fu P(1), Mahavithana S(1), Jang S(1), Abushanab D(#)(1)(2), 
+Ademi Z(#)(3)(4).
+
+Author information:
+(1)Health Economics and Policy Evaluation Research (HEPER) Group, Centre for 
+Medicine Use and Safety, Faculty of Pharmacy and Pharmaceutical Sciences, Monash 
+University, 381 Royal Parade, Parkville, VIC, 3052, Australia.
+(2)Department of Pharmacy, Hamad Medical Corporation, Doha, Qatar.
+(3)Health Economics and Policy Evaluation Research (HEPER) Group, Centre for 
+Medicine Use and Safety, Faculty of Pharmacy and Pharmaceutical Sciences, Monash 
+University, 381 Royal Parade, Parkville, VIC, 3052, Australia. 
+zanfina.ademi@monash.edu.
+(4)School of Public Health and Preventive Medicine, Monash University, 
+Melbourne, Australia. zanfina.ademi@monash.edu.
+(#)Contributed equally
+
+BACKGROUND: There are various quality of life (QoL) tools utilised in 
+pharmacogenomic studies, but it remains unclear which tools are most frequently 
+used. Our aim was to identify the types of QoL measures currently used in 
+pharmacogenomic studies and address the existing evidence gap.
+METHODS: A systematic review screened PubMed, Cochrane Library, Ovid, and Embase 
+from inception through April 30, 2024. The search terms were "Pharmacogenetics" 
+AND ("quality of life" OR "PROMS" OR "PREMS" OR "health related quality of life" 
+OR "'EuroQol" OR "utility" OR "generic" OR "time trade off" OR "standard gamble" 
+OR "SF-6D" OR "EQ-5D"). Our inclusion criteria were randomised clinical trials, 
+cohort studies and cross-sectional studies that utilised generic and/or 
+disease-specific QoL measures related to pharmacogenomics.
+RESULTS: Twelve studies met the inclusion criteria, from which we identified the 
+following tools: EORTC QLQ-C30 (n = 3), SF-36 (n = 3), SF-12 (n = 1), 
+WHOQOL-BREF (n = 1), Q-LES-Q-SF (n = 1), FACT-Melanoma (n = 1), QLQ-C30 + QLQ 
+BN20 (n = 1), QLQ-C30 + QLQ-CIPN20 (n = 1). The SF-36, SF-12, WHOQOL-BREF, and 
+Q-LES-Q-SF are generic QoL questionnaires, while FACT-Melanoma, QLQ BN20, and 
+QLQ-CIPN20 are disease specific. The EORTC QLQ-C20, although generic, is 
+tailored for cancer patients. None of the included studies justified their 
+choice of quality-of-life tool, nor was there consistency in how scores were 
+reported in terms of overall and domain-specific outcomes.
+CONCLUSIONS: Pharmacogenomic studies employed diverse QoL instruments, hindering 
+consistent and reliable reporting. Future studies should justify QoL tool 
+selection and report both overall and domain-specific outcomes consistently to 
+enable valid comparisons and inform decision-making.
+
+© 2025. The Author(s).
+
+DOI: 10.1007/s11136-025-04030-w
+PMCID: PMC12535481
+PMID: 40679535 [Indexed for MEDLINE]
+
+Conflict of interest statement: Declarations. Competing interests: Authors have 
+no conflicts of interest to disclose. Ethical approval: The study did not 
+require ethics approval. Consent to participate: Not applicable. Consent for 
+publication: Not applicable.
+
+
+8. J Clin Apher. 2026 Sep;41 Suppl 2(Suppl 2):e70141. doi: 10.1002/jca.70141.
+
+Guidelines on the Use of Therapeutic Apheresis in Clinical 
+Practice-Evidence-Based Approach From the Writing Committee of the American 
+Society for Apheresis: The Tenth Special Issue.
+
+Zantek ND(1), Alquist CR(2), Hofmann JC(3), Klingel R(4), Levenbrown Y(5), 
+Onwuemene OA(6), Patidar G(7), Patriquin CJ(8), Raval JS(9), Sanchez AP(10), 
+Schneiderman J(11), Tanhehco YC(12), Connelly-Smith L(13).
+
+Author information:
+(1)Department of Laboratory Medicine and Pathology, University of Minnesota, 
+Minneapolis, Minnesota, USA.
+(2)Hoxworth Blood Center, University of Cincinnati, Cincinnati, Ohio, USA.
+(3)Department of Pathology and Laboratory Medicine, University of California San 
+Francisco, San Francisco, California, USA.
+(4)Apheresis Research Institute, Cologne, and First Dept. Internal Medicine, 
+University Hospital Mainz, Germany.
+(5)Department of Critical Care, Nemours Children's Hospital, Wilmington, 
+Delaware, USA.
+(6)Division of Hematology, Department of Medicine, Duke University Medical 
+Center, Durham, North Carolina, USA.
+(7)Department of Transfusion Medicine, All India Institute of Medical Sciences, 
+New Delhi, India.
+(8)Division of Medical Oncology and Hematology, University of Toronto, Toronto, 
+Ontario, Canada.
+(9)Department of Pathology & Laboratory Medicine, Robert Larner, M.D. College of 
+Medicine, University of Vermont, Burlington, Vermont and the Department of 
+Pathology, University of New Mexico Health Sciences Center, Albuquerque, New 
+Mexico, USA.
+(10)Division of Nephrology and Hypertension, Department of Medicine, University 
+of California San Diego, San Diego, California, USA.
+(11)Division of Pediatric Hematology/Oncology/Neuro-Oncology/Stem Cell 
+Transplant, Ann & Robert H. Lurie Children's Hospital of Chicago, Northwestern 
+University Feinberg School of Medicine, Chicago, Illinois, USA.
+(12)Department of Pathology and Cell Biology, Columbia University Irving Medical 
+Center, New York, New York, USA.
+(13)Division of Hematology and Oncology, Fred Hutch Cancer Center & University 
+of Washington Medical Center, Seattle, Washington, USA.
+
+The American Society for Apheresis (ASFA) Journal of Clinical Apheresis (JCA) 
+Special Issue Writing Committee is charged with reviewing, updating, and 
+categorizing indications for the evidence-based use of therapeutic apheresis 
+(TA) in human disease. As in recent editions, the Tenth Edition of the JCA 
+Special Issue committee has incorporated systematic review and evidence-based 
+approaches in the grading of evidence and categorization of apheresis 
+indications to make recommendations on the use of apheresis in a wide variety of 
+diseases and conditions. This edition has largely maintained the general layout 
+and concept of a fact sheet introduced in the Fourth Edition (2007). Each fact 
+sheet succinctly summarizes the evidence for the use of TA in a specific disease 
+entity or medical condition. The Tenth Edition comprises 93 fact sheets and 183 
+graded and categorized indications. This includes two new fact sheets and 
+several changes to indications, categorization, or grade on existing fact 
+sheets. The Tenth Edition of the JCA Special Issue seeks to continue to serve as 
+a key resource that guides the utilization of TA in the treatment of human 
+disease.
+
+© 2026 Wiley Periodicals LLC.
+
+DOI: 10.1002/jca.70141
+PMCID: PMC13580465
+PMID: 42747330 [Indexed for MEDLINE]
+
+Conflict of interest statement: This document was prepared by ASFA for the 
+apheresis community and clinicians who may employ TA. Although care was taken in 
+its preparation, ASFA makes no representation or warranty, express or implied, 
+regarding its completeness or freedom from error, and disclaims all warranties, 
+including but not limited to, warranties as to the information’s quality or 
+fitness for a particular purpose. The information contained herein is not 
+intended to supplant the clinical judgment of qualified medical professionals, 
+ASFA and its directors, officers, employees, members, representatives, and 
+agents accept no liability for any loss, cost, expense, injury, or damages, 
+whether direct, indirect, incidental, consequential, special, or other, arising 
+from the application of the information contained in this document for patient 
+care or any other use. The accuracy of the information contained herein is 
+subject to changes in circumstances after the time of publication. ASFA accepts 
+no responsibility for the accuracy and reliability of information provided by 
+third parties. Conflicts of Interest: Dr. Zantek: Officer and Board Member—North 
+American Specialized Coagulation Laboratory Association (NASCOLA) and External 
+Quality Assurance in Thrombosis and Hemostasis (EQATH); Financial 
+interest—Boston Scientific and ENDO International PLC. Dr. Alquist: 
+Consultant—Terumo BCT; Grant, Velico Medical, Cerus, and Terumo BCT; 
+Speaker—Thermo Fisher. Dr. Hoffmann: Consultant, Fresenius Medical Care and 
+Terumo BCT. Dr. Klingel: Research grant—Asahi Kasei Medical, Japan and Diamed, 
+Germany. Dr. Levenbrown: No conflicts of interest. Dr. Onwuemene: 
+Consultant—Sanofi; Honoraria—Sanofi. Dr. Patriquin: Consultant—Alexion, Amgen, 
+BioCryst, Novartis, Regeneron, Roche, Sanofi, Sobi, and Takeda; Speaking 
+Honoraria—Alexion, Amgen, Novartis, and Sobi. Dr. Raval: Consultant—Sanofi SA, 
+Terumo BCT, Medtronic PLC. Dr. Sanchez: Consultant—Terumo BCT; Educational 
+honoraria—Terumo BCT. Dr. Schneiderman: Research grant—Therakos. Dr. Patidar: No 
+conflicts of interest. Dr. Tanhehco: No conflicts of interest. Dr. 
+Connelly‐Smith: No conflicts of interest. Drs. Zantek, Hoffmann, Raval, 
+Schneiderman, and Connelly‐Smith are current ASFA Board of Director members 
+and/or officers.
+
+
+9. Alcohol Res. 2026 May 14;46(1):02. doi: 10.35946/arcr.v46.1.02. eCollection 
+2026.
+
+Alcohol Misuse in Older Women: A Scoping Review of Correlates, Consequences, 
+Treatment, and Prevention.
+
+Holzhauer CG(1), Stein M(2)(3), Rosen R(4), Grigorian H(5), Iverson M(6), 
+Epstein EE(2).
+
+Author information:
+(1)Department of Psychiatry, University of Connecticut School of Medicine, 
+Farmington, Connecticut, New York.
+(2)Department of Psychiatry, University of Massachusetts Medical School, 
+Worcester, Massachusetts, New York.
+(3)Narrows Institute for Biomedical Research & Education Inc., Brooklyn, New 
+York.
+(4)Department of Psychiatry, Massachusetts General Hospital, Boston, 
+Massachusetts.
+(5)Mental Illness Research, Education and Clinical Center, VA Bedford Healthcare 
+System, Bedford, Massachusetts.
+(6)UConn Health Sciences Library, Farmington, Connecticut.
+
+BACKGROUND: Alcohol use and alcohol use disorder (AUD) among older women 
+(defined as age 50 and over) have increased substantially in recent years. 
+Compared to men and younger women, older women negotiate biopsychosocial 
+transitions that put them at greater risk of alcohol-related health conditions 
+as they age and are less reliably screened and treated for heavy alcohol use and 
+AUD.
+OBJECTIVES: This scoping review represents a critical evaluation of research 
+methodology and findings since 2004 on biopsychosocial correlates and 
+consequences of alcohol misuse (i.e., heavy alcohol use, defined as four or more 
+drinks on any day or eight or more drinks per week; and/or AUD) among older 
+women. These findings, with a focus on their implications for treatment and 
+prevention strategies among this at-risk population, are discussed. The goal of 
+the review is to summarize current research as well as treatment and prevention 
+options available for older women and to identify gaps in the literature and 
+potential for future research.
+ELIGIBILITY CRITERIA: 2,579 research articles were reviewed for inclusion in the 
+paper. Inclusion criteria required that a study's findings were relevant to the 
+review's objectives, with analyses and results that had clinically relevant 
+findings for older women with heavy alcohol use and/or AUD.
+SOURCES OF EVIDENCE: Authors searched PubMed, Embase, and PsycInfo for articles 
+published between January 1, 1994, and August 5, 2024.
+CHARTING METHODS: Two authors developed the template for data extraction, and 
+four authors charted data. Weekly meetings were used to establish, monitor, and 
+maintain calibration among authors.
+RESULTS: 127 articles met inclusion/exclusion criteria and were included in the 
+final extraction and results summary. Evidence-based information is presented on 
+(1) clinical presentation of older women with alcohol misuse; (2) biological 
+correlates of alcohol use in older age; (3) psychosocial correlates and 
+consequences, such as mood disorders, social networks, and other substance use; 
+(4) increased risk of health conditions, such as breast cancer and depression; 
+and (5) current state of treatment and prevention needs and efforts.
+CONCLUSIONS: The research reviewed here indicates a need for further age- and 
+sex-specific research in the field of alcohol use and AUD. After age 50, men and 
+women continue to differ in important ways in relation to the correlates, 
+consequences, and treatment of alcohol misuse. The current literature includes 
+significant methodological limitations and inconsistencies. Research with 
+samples of older women who drink at heavy levels may be particularly helpful in 
+addressing these limitations. Existing prevention and treatment interventions 
+may be good options for older women, but more research is needed.
+
+DOI: 10.35946/arcr.v46.1.02
+PMCID: PMC13182901
+PMID: 42157999 [Indexed for MEDLINE]
+
+Conflict of interest statement: Disclosures: The authors declare no competing 
+financial or nonfinancial interests.
