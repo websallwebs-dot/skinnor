@@ -1,0 +1,6 @@
+{
+  "name": "Skinnor - Teledermatología",
+  "description": "Plataforma de monitoreo teledermatológico, análisis cuantitativo de lesiones y gestión clínica con IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
