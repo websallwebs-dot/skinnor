@@ -120,6 +120,22 @@ CREATE TABLE IF NOT EXISTS lesion_analisis (
 );
 
 -- -------------------------------------------------
+-- Diffs consecutivos dia a dia (par anterior -> actual)
+-- -------------------------------------------------
+CREATE TABLE IF NOT EXISTS lesion_par_diff (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  lesion_id INTEGER NOT NULL,
+  paso INTEGER NOT NULL,
+  fuente TEXT,
+  metricas TEXT NOT NULL,
+  heatmap BLOB,
+  viz BLOB,
+  creado_en TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE(lesion_id, paso),
+  FOREIGN KEY (lesion_id) REFERENCES lesiones(id) ON DELETE CASCADE
+);
+
+-- -------------------------------------------------
 -- Códigos de acceso profesional <-> paciente
 -- -------------------------------------------------
 CREATE TABLE IF NOT EXISTS codigos_acceso (

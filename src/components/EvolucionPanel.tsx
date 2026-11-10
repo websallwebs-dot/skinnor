@@ -110,20 +110,23 @@ export default function EvolucionPanel({
             borde: it.follow?.borde_irregularidad ?? null,
             colores: it.follow?.colores_detectados ?? null,
             variegacion: it.follow?.variegacion ?? null,
+            colorNuevo: it.par?.color_nuevo_pct ?? null,
             tds: it.tds_estimado ?? null,
           };
         });
         const idxCharts = [
-          { key: 'asimetria' as const, label: 'A · Asimetría', unit: '', domain: [0, 1] as [number, number], ref: null as number | null },
-          { key: 'borde' as const, label: 'B · Borde', unit: '', domain: [0, 1] as [number, number], ref: null },
-          { key: 'colores' as const, label: 'C · Colores detectados', unit: '', domain: [0, 'auto'] as [number, number | 'auto'], ref: null },
-          { key: 'tds' as const, label: 'TDS estimado', unit: '', domain: [0, 'auto'] as [number, number | 'auto'], ref: 5.45 },
+          { key: 'asimetria' as const, label: 'A · Asimetría', domain: [0, 1] as [number, number], ref: null as number | null, hint: '0 = simétrico' },
+          { key: 'borde' as const, label: 'B · Borde', domain: [0, 1] as [number, number], ref: null, hint: '0 = regular' },
+          { key: 'colores' as const, label: 'C · Colores detectados', domain: [0, 'auto'] as [number, number | 'auto'], ref: null, hint: 'clusters dominantes' },
+          { key: 'variegacion' as const, label: 'C · Variegación', domain: [0, 'auto'] as [number, number | 'auto'], ref: null, hint: 'desvío de tono Lab' },
+          { key: 'colorNuevo' as const, label: 'C · Color nuevo', domain: [0, 'auto'] as [number, number | 'auto'], ref: null, hint: '% píxeles vs basal' },
+          { key: 'tds' as const, label: 'TDS estimado', domain: [0, 'auto'] as [number, number | 'auto'], ref: 5.45, hint: 'umbral 5.45' },
         ].map((c) => ({
           ...c,
           data: idxSeries
             .filter((p) => p[c.key] !== null)
             .map((p) => ({ name: p.name, tag: p.tag, v: p[c.key] as number })),
-        })).filter((c) => c.data.length >= 2);
+        })).filter((c) => c.data.length >= 1);
 
         return (
           <section key={lesion.id}>
@@ -452,24 +455,27 @@ export default function EvolucionPanel({
               <Card className="border-[#d8e0dc] shadow-none rounded-xl bg-white mb-4">
                 <div className="px-5 py-3 border-b border-[#d8e0dc]">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-[#5f7b6f]">
-                    Índices de imagen por control
+                    Monitoreo cuantitativo de índices por control
                   </h3>
                   <p className="text-[11px] text-[#5f7b6f] mt-0.5">
-                    Valores computados sobre las imágenes reales (0–1 salvo TDS). Solo se muestran series con 2+ mediciones.
+                    Asimetría, bordes, colores y diámetro computados sobre las imágenes reales en cada control. Con un solo control se muestra el valor basal del índice; la tendencia aparece al acumular registros.
                   </p>
                 </div>
                 <CardContent className="p-4">
-                  <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {idxCharts.map((c) => {
                       const last = c.data[c.data.length - 1];
+                      const isInt = c.key === 'colores';
+                      const fmt = (v: number) => (isInt ? v.toFixed(0) : v.toFixed(2));
                       return (
                         <div key={c.key} className="border border-[#eef1ef] rounded-md p-3">
-                          <div className="flex items-baseline justify-between mb-1">
+                          <div className="flex items-baseline justify-between mb-0.5">
                             <span className="text-[11px] font-semibold uppercase tracking-wide text-[#5f7b6f]">{c.label}</span>
                             <span className="text-xs font-semibold text-[#0c1512] tabular-nums">
-                              {last.v.toFixed(c.key === 'colores' ? 0 : 2)}
+                              {fmt(last.v)}
                             </span>
                           </div>
+                          <div className="text-[9px] text-[#8a978f] mb-1">{c.hint}</div>
                           <div className="h-24">
                             <ResponsiveContainer width="100%" height="100%">
                               <LineChart data={c.data} margin={{ top: 4, right: 4, bottom: 0, left: -22 }}>
@@ -478,13 +484,13 @@ export default function EvolucionPanel({
                                 <YAxis domain={c.domain} tick={{ fontSize: 9, fill: '#5f7b6f' }} tickLine={false} axisLine={false} />
                                 <Tooltip
                                   contentStyle={{ fontSize: 11, border: '1px solid #d8e0dc', borderRadius: 8, background: '#fff' }}
-                                  formatter={(v: any) => [c.key === 'colores' ? v : Number(v).toFixed(2), c.label]}
+                                  formatter={(v: any) => [isInt ? v : Number(v).toFixed(2), c.label]}
                                   labelFormatter={(l, p: any) => `${l} • ${p?.[0]?.payload?.tag ?? ''}`}
                                 />
                                 {c.ref !== null && (
                                   <ReferenceLine y={c.ref} stroke="#c77a0b" strokeDasharray="4 4" />
                                 )}
-                                <Line type="monotone" dataKey="v" stroke="#0c1512" strokeWidth={1.5} dot={{ r: 2.5, fill: '#0c1512', strokeWidth: 0 }} />
+                                <Line type="monotone" dataKey="v" stroke="#0c1512" strokeWidth={1.5} dot={{ r: 2.5, fill: '#0c1512', strokeWidth: 0 }} connectNulls={false} />
                               </LineChart>
                             </ResponsiveContainer>
                           </div>

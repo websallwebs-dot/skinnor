@@ -1,4 +1,5 @@
 ﻿import base64
+import os
 import cv2
 import numpy as np
 from contextlib import asynccontextmanager
@@ -13,9 +14,9 @@ model_assets = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Descargando/verificando cache del modelo google/derm-foundation...")
-    # Descarga el repositorio localmente y devuelve la ruta del folder
-    model_dir = snapshot_download(repo_id="google/derm-foundation")
+    print("Cargando modelo google/derm-foundation...")
+    # Prioridad: DERM_MODEL_PATH (carpeta local con el SavedModel), si no, cache de Hugging Face
+    model_dir = os.environ.get("DERM_MODEL_PATH") or snapshot_download(repo_id="google/derm-foundation")
     
     print("Cargando modelo SavedModel en memoria...")
     loaded_model = tf.saved_model.load(model_dir)

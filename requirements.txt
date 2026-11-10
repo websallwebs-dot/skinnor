@@ -1,0 +1,8 @@
+fastapi>=0.110
+uvicorn>=0.29
+opencv-python-headless>=4.9
+numpy>=1.26
+Pillow>=10.0
+tensorflow>=2.16
+huggingface_hub>=0.23
+python-multipart>=0.0.9

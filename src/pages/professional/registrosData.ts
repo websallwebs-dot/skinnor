@@ -1,5 +1,6 @@
 export interface RegistroFoto {
   id: string;
+  lesionId?: number;
   tag: string;
   fecha: string;
   fullDate: string;

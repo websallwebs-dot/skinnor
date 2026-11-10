@@ -158,4 +158,131 @@ router.get('/viz/:id', (req, res) => {
   res.send(row.viz);
 });
 
+// GET /api/lesiones/:lesionId/evolucion/diffs — comparacion consecutiva dia a dia
+// Par 1: foto basal -> primer seguimiento; Par N: seguimiento N-1 -> seguimiento N
+router.get('/:lesionId/evolucion/diffs', async (req, res) => {
+  const lesionId = Number(req.params.lesionId);
+  const lesion = get('SELECT id, foto_base, creado_en FROM lesiones WHERE id = ?', [lesionId]) as any;
+  if (!lesion) return res.status(404).json({ error: 'Lesión no encontrada' });
+
+  const segs = all(
+    `SELECT s.id, s.fecha,
+            (SELECT sf.id FROM seguimiento_fotos sf WHERE sf.seguimiento_id = s.id ORDER BY sf.orden ASC, sf.id ASC LIMIT 1) AS foto_id,
+            (SELECT sf.foto FROM seguimiento_fotos sf WHERE sf.seguimiento_id = s.id ORDER BY sf.orden ASC, sf.id ASC LIMIT 1) AS foto_blob,
+            (SELECT sf.mime FROM seguimiento_fotos sf WHERE sf.seguimiento_id = s.id ORDER BY sf.orden ASC, sf.id ASC LIMIT 1) AS foto_mime,
+            s.foto AS legacy_foto
+     FROM seguimientos s WHERE s.lesion_id = ? ORDER BY s.fecha ASC`,
+    [lesionId]
+  ) as any[];
+
+  interface Sesion { key: string; buf: Buffer | null; mime: string; fecha: string; img: string }
+  const sesiones: Sesion[] = [];
+  if (lesion.foto_base) {
+    sesiones.push({
+      key: 'base',
+      buf: lesion.foto_base as Buffer,
+      mime: 'image/jpeg',
+      fecha: lesion.creado_en,
+      img: `/lesiones/${lesionId}/foto`,
+    });
+  }
+  for (const seg of segs) {
+    const buf: Buffer | null = seg.foto_blob || seg.legacy_foto;
+    if (!buf) continue;
+    sesiones.push({
+      key: `seg-${seg.id}-f${seg.foto_id || 'legacy'}`,
+      buf,
+      mime: seg.foto_mime || 'image/jpeg',
+      fecha: seg.fecha,
+      img: seg.foto_id
+        ? `/lesiones/${lesionId}/seguimientos/${seg.id}/fotos/${seg.foto_id}`
+        : `/lesiones/${lesionId}/seguimientos/${seg.id}/foto`,
+    });
+  }
+
+  if (sesiones.length < 2) return res.json({ items: [], errores: undefined });
+
+  const items: any[] = [];
+  const errores: string[] = [];
+
+  for (let i = 1; i < sesiones.length; i++) {
+    const prev = sesiones[i - 1];
+    const curr = sesiones[i];
+    const paso = i;
+    const fuente = `${prev.key}->${curr.key}`;
+
+    const cached = get(
+      'SELECT id, fuente, metricas FROM lesion_par_diff WHERE lesion_id = ? AND paso = ?',
+      [lesionId, paso]
+    ) as any;
+
+    let rowId: number;
+    let metricas: any;
+
+    if (cached && cached.fuente === fuente) {
+      rowId = cached.id;
+      metricas = JSON.parse(cached.metricas);
+    } else {
+      try {
+        const out = await analyzePair(prev.buf!, curr.buf!, prev.mime, curr.mime);
+        const { heatmap_b64, viz_b64, ...rest } = out;
+        const heatmap = heatmap_b64 ? Buffer.from(heatmap_b64, 'base64') : null;
+        const viz = viz_b64 ? Buffer.from(viz_b64, 'base64') : null;
+        const existing = cached;
+        if (existing) {
+          run(
+            'UPDATE lesion_par_diff SET fuente = ?, metricas = ?, heatmap = ?, viz = ? WHERE id = ?',
+            [fuente, JSON.stringify(rest), heatmap, viz, existing.id]
+          );
+          rowId = existing.id;
+        } else {
+          const r = run(
+            'INSERT INTO lesion_par_diff (lesion_id, paso, fuente, metricas, heatmap, viz) VALUES (?, ?, ?, ?, ?, ?)',
+            [lesionId, paso, fuente, JSON.stringify(rest), heatmap, viz]
+          );
+          rowId = r.lastInsertRowid as number;
+        }
+        metricas = rest;
+      } catch (e: any) {
+        errores.push(`par ${paso}: ${e?.message || e}`);
+        if (cached) {
+          rowId = cached.id;
+          metricas = JSON.parse(cached.metricas);
+        } else {
+          continue;
+        }
+      }
+    }
+
+    items.push({
+      paso,
+      fecha_a: prev.fecha,
+      fecha_b: curr.fecha,
+      img_a: prev.img,
+      img_b: curr.img,
+      heatmap_id: rowId,
+      par: metricas?.par,
+      follow: metricas?.follow,
+    });
+  }
+
+  res.json({ items, errores: errores.length ? errores : undefined });
+});
+
+// GET /api/lesiones/par-diff/heatmap/:id — heatmap de diff consecutivo (PNG)
+router.get('/par-diff/heatmap/:id', (req, res) => {
+  const row = get('SELECT heatmap FROM lesion_par_diff WHERE id = ?', [req.params.id]) as any;
+  if (!row || !row.heatmap) return res.status(404).json({ error: 'Heatmap no disponible' });
+  res.set('Content-Type', 'image/png');
+  res.send(row.heatmap);
+});
+
+// GET /api/lesiones/par-diff/viz/:id — panel de analisis del diff consecutivo (PNG)
+router.get('/par-diff/viz/:id', (req, res) => {
+  const row = get('SELECT viz FROM lesion_par_diff WHERE id = ?', [req.params.id]) as any;
+  if (!row || !row.viz) return res.status(404).json({ error: 'Visualizacion no disponible' });
+  res.set('Content-Type', 'image/png');
+  res.send(row.viz);
+});
+
 export default router;

@@ -11,7 +11,8 @@ import {
   Building2,
   UserCheck,
   Stethoscope,
-  LogOut
+  LogOut,
+  LogIn
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -54,6 +55,12 @@ export default function DashboardLayout() {
         </div>
         
         <div className="ml-auto flex items-center gap-3">
+          <button
+            onClick={() => { logout(); navigate('/login'); }}
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#d8e0dc] bg-white px-3 py-1.5 text-xs font-medium text-[#3f4f49] hover:text-[#0c1512] hover:border-[#0d7a63]/50 transition-colors"
+          >
+            <LogIn className="h-3.5 w-3.5" /> Volver al login
+          </button>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={

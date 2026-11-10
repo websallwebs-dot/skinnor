@@ -61,6 +61,15 @@ router.post('/register', (req, res) => {
   if (!email || !nombre) {
     return res.status(400).json({ error: 'Email y nombre requeridos' });
   }
+  const roleMap: Record<string, string> = {
+    patient: 'paciente',
+    paciente: 'paciente',
+    professional: 'profesional',
+    profesional: 'profesional',
+    clinic_admin: 'clinic_admin',
+    super_admin: 'super_admin',
+  };
+  const dbRol = roleMap[rol] || 'paciente';
   const existing = get('SELECT id FROM usuarios WHERE email = ?', [email]);
   if (existing) {
     return res.status(409).json({ error: 'El email ya está registrado' });
@@ -68,14 +77,14 @@ router.post('/register', (req, res) => {
   const hash = '$2b$10$placeholder.hash.for.development.only';
   const result = run(
     'INSERT INTO usuarios (email, password_hash, nombre, rol, tenant_id, activo) VALUES (?, ?, ?, ?, ?, 1)',
-    [email, hash, nombre, rol, tenant_id || null]
+    [email, hash, nombre, dbRol, tenant_id || null]
   );
   const userId = result.lastInsertRowid as number;
-  if (rol === 'paciente') {
+  if (dbRol === 'paciente') {
     run('INSERT OR IGNORE INTO pacientes (usuario_id) VALUES (?)', [userId]);
   }
   res.status(201).json({
-    user: { id: userId, email, nombre, rol, tenantId: tenant_id || null },
+    user: { id: userId, email, nombre, rol: dbRol, tenantId: tenant_id || null },
     token: `dev-token-${userId}`,
   });
 });

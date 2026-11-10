@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,14 +14,16 @@ import {
   Sliders,
   Layers,
   Zap,
-  Grid,
   Activity,
   Flame,
   SplitSquareVertical,
-  CheckCircle2
+  ArrowRightLeft,
+  Loader2
 } from 'lucide-react';
 import { RegistroFoto, REGISTROS_FOTOS } from './registrosData';
 import DermatoscopeLesionImage from '@/components/dermatology/DermatoscopeLesionImage';
+import PreprocessImage, { PREPROCESS_FILTERS, PreprocessFilter } from '@/components/PreprocessImage';
+import { API_BASE } from '@/lib/api';
 
 interface GaleriaImagenes4ColProps {
   fotos?: RegistroFoto[];
@@ -40,44 +42,38 @@ const MONTH_NAMES_ES = [
 /** Vista de imagen de captura: foto real del servidor o generador SVG (datos demo). */
 function CaptureVisual({
   foto,
-  showReticle,
   showRoiContour,
   showHeatmap,
   isPolarized,
   zoom,
   highlightAsymmetry,
+  filter,
 }: {
   foto: RegistroFoto;
-  showReticle: boolean;
   showRoiContour: boolean;
   showHeatmap: boolean;
   isPolarized: boolean;
   zoom: number;
   highlightAsymmetry?: boolean;
+  filter?: PreprocessFilter;
 }) {
   if (foto.imageUrl) {
     return (
       <div className="relative w-full h-full overflow-hidden bg-[#110d0a]">
-        <img
-          src={foto.imageUrl}
-          alt={foto.lesion}
-          className="w-full h-full object-cover"
-          style={{
-            transform: `scale(${zoom})`,
-            transformOrigin: 'center center',
-            transition: 'transform 0.25s ease-out',
-          }}
-          draggable={false}
-        />
-        {showReticle && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <g stroke="#10b981" strokeWidth="0.4" opacity="0.85">
-              <line x1="50" y1="0" x2="50" y2="100" />
-              <line x1="0" y1="50" x2="100" y2="50" />
-            </g>
-            <circle cx="50" cy="50" r="18" fill="none" stroke="#10b981" strokeWidth="0.4" opacity="0.85" />
-            <circle cx="50" cy="50" r="6" fill="none" stroke="#10b981" strokeWidth="0.4" opacity="0.85" />
-          </svg>
+        {filter && filter !== 'original' ? (
+          <PreprocessImage src={foto.imageUrl} filter={filter} zoom={zoom} />
+        ) : (
+          <img
+            src={foto.imageUrl}
+            alt={foto.lesion}
+            className="w-full h-full object-cover"
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: 'center center',
+              transition: 'transform 0.25s ease-out',
+            }}
+            draggable={false}
+          />
         )}
       </div>
     );
@@ -86,13 +82,173 @@ function CaptureVisual({
     <DermatoscopeLesionImage
       tag={foto.tag}
       lesionName={foto.lesion}
-      showReticle={showReticle}
+      showReticle={false}
       showRoiContour={showRoiContour}
       showHeatmap={showHeatmap}
       isPolarized={isPolarized}
       zoom={zoom}
       highlightAsymmetry={highlightAsymmetry}
     />
+  );
+}
+
+function fmtFechaCorta(iso?: string): string {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return isNaN(d.getTime())
+    ? iso
+    : d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+interface DiffItem {
+  paso: number;
+  fecha_a: string;
+  fecha_b: string;
+  img_a: string;
+  img_b: string;
+  heatmap_id: number;
+  par?: {
+    cambio_pct?: number;
+    color_nuevo_pct?: number;
+    registro_confianza?: number;
+    diametro_delta_px?: number;
+    diametro_delta_pct?: number;
+  };
+}
+
+/** Comparaciones consecutivas dia a dia de una lesion (basal -> T1 -> T2 ...). */
+function LesionSecuenciaDiffs({ lesionId, lesionNombre }: { lesionId: number; lesionNombre: string }) {
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<DiffItem[]>([]);
+  const [errores, setErrores] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetch(`${API_BASE}/lesiones/${lesionId}/evolucion/diffs`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((data) => {
+        if (cancelled) return;
+        setItems(data.items || []);
+        setErrores(data.errores || []);
+      })
+      .catch(() => {
+        if (!cancelled) setErrores(['No se pudo obtener el análisis secuencial de imagen.']);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [lesionId]);
+
+  return (
+    <Card className="border-slate-200 shadow-xs bg-white rounded-xl overflow-hidden">
+      <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
+        <div>
+          <h4 className="text-sm font-semibold text-slate-900">{lesionNombre}</h4>
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Comparación consecutiva día a día: cada control contra el registro anterior.
+          </p>
+        </div>
+        <span className="text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-full px-2.5 py-1">
+          {loading ? 'Analizando…' : `${items.length} ${items.length === 1 ? 'paso' : 'pasos'}`}
+        </span>
+      </div>
+
+      {loading ? (
+        <div className="p-8 flex items-center justify-center gap-2 text-xs text-slate-500">
+          <Loader2 className="h-4 w-4 animate-spin text-emerald-700" />
+          Registrando y comparando imágenes consecutivas…
+        </div>
+      ) : items.length === 0 ? (
+        <div className="p-8 text-center text-xs text-slate-500">
+          {errores[0] || 'Sin suficientes registros para comparar esta lesión.'}
+        </div>
+      ) : (
+        <div className="divide-y divide-slate-100">
+          {items.map((it) => {
+            const cambio = it.par?.cambio_pct;
+            const colorNuevo = it.par?.color_nuevo_pct;
+            const confianza = it.par?.registro_confianza;
+            return (
+              <div key={it.paso} className="p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-[11px] font-bold text-slate-500 bg-slate-100 border border-slate-200 rounded px-1.5 py-0.5">
+                    PASO {it.paso}
+                  </span>
+                  <span className="text-xs text-slate-600">
+                    {fmtFechaCorta(it.fecha_a)} <span className="text-slate-400">→</span> {fmtFechaCorta(it.fecha_b)}
+                  </span>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    {cambio !== undefined && (
+                      <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                        cambio > 10
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          : cambio > 3
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      }`}>
+                        {cambio}% área cambió
+                      </span>
+                    )}
+                    {colorNuevo !== undefined && colorNuevo > 0 && (
+                      <span className="text-[11px] font-medium px-2 py-0.5 rounded-full border bg-sky-50 text-sky-800 border-sky-200">
+                        {colorNuevo}% color nuevo
+                      </span>
+                    )}
+                    {confianza !== undefined && (
+                      <span className="text-[11px] text-slate-500">
+                        registro {(confianza * 100).toFixed(0)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-[1fr_auto_1fr_auto_1.2fr] gap-3 items-center">
+                  <figure>
+                    <div className="aspect-square w-full rounded-lg overflow-hidden border border-slate-200 bg-[#110d0a]">
+                      <img src={`${API_BASE}${it.img_a}`} alt="Registro anterior" className="w-full h-full object-cover" />
+                    </div>
+                    <figcaption className="text-[10px] text-slate-500 mt-1 text-center font-medium">
+                      Anterior · {fmtFechaCorta(it.fecha_a)}
+                    </figcaption>
+                  </figure>
+                  <ArrowRightLeft className="h-4 w-4 text-slate-400 hidden md:block" />
+                  <figure>
+                    <div className="aspect-square w-full rounded-lg overflow-hidden border border-slate-200 bg-[#110d0a]">
+                      <img src={`${API_BASE}${it.img_b}`} alt="Registro actual" className="w-full h-full object-cover" />
+                    </div>
+                    <figcaption className="text-[10px] text-slate-500 mt-1 text-center font-medium">
+                      Actual · {fmtFechaCorta(it.fecha_b)}
+                    </figcaption>
+                  </figure>
+                  <ArrowRightLeft className="h-4 w-4 text-slate-400 hidden md:block" />
+                  <figure>
+                    <div className="aspect-square w-full rounded-lg overflow-hidden border border-slate-800 bg-[#110d0a]">
+                      <img
+                        src={`${API_BASE}/lesiones/par-diff/heatmap/${it.heatmap_id}`}
+                        alt="Mapa de diferencias"
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    </div>
+                    <figcaption className="text-[10px] text-slate-500 mt-1 text-center font-medium">
+                      Diff · zona en rojo = cambio
+                    </figcaption>
+                  </figure>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {errores.length > 0 && items.length > 0 && (
+        <div className="px-4 py-2 border-t border-slate-100 text-[11px] text-amber-700 bg-amber-50/60">
+          {errores.join(' · ')}
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -107,9 +263,7 @@ export default function GaleriaImagenes4Col({
   const data = fotosProp ?? REGISTROS_FOTOS;
   const isReal = fotosProp !== undefined;
   const [selectedFoto, setSelectedFoto] = useState<RegistroFoto | null>(null);
-  const [activeFilter, setActiveFilter] = useState<'todos' | 'dermatoscopia' | 'macro' | 'cambios' | 'estables'>('todos');
-  const [lesionFilter, setLesionFilter] = useState<string>('todas');
-  const [viewMode, setViewMode] = useState<'grid' | 'calendar' | 'compare'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'calendar' | 'compare' | 'secuencia'>('grid');
 
   // Meses disponibles derivados de las fechas reales de las capturas
   const availableMonths = Array.from(
@@ -124,14 +278,13 @@ export default function GaleriaImagenes4Col({
 
   // Optical and overlay settings across gallery
   const [globalPolarized, setGlobalPolarized] = useState<boolean>(true);
-  const [globalReticle, setGlobalReticle] = useState<boolean>(true);
   const [globalHeatmap, setGlobalHeatmap] = useState<boolean>(false);
   const [globalRoiContour, setGlobalRoiContour] = useState<boolean>(false);
 
   // Modal zoom and inspection states
   const [modalZoom, setModalZoom] = useState<number>(1);
   const [modalPolarized, setModalPolarized] = useState<boolean>(true);
-  const [modalReticle, setModalReticle] = useState<boolean>(true);
+  const [modalFilter, setModalFilter] = useState<PreprocessFilter>('original');
   const [modalHeatmap, setModalHeatmap] = useState<boolean>(false);
   const [modalRoiContour, setModalRoiContour] = useState<boolean>(false);
   const [modalAsymmetryGuide, setModalAsymmetryGuide] = useState<boolean>(false);
@@ -140,25 +293,13 @@ export default function GaleriaImagenes4Col({
   const [compLeftId, setCompLeftId] = useState<string | null>(null);
   const [compRightId, setCompRightId] = useState<string | null>(null);
 
-  const lesionesDisponibles = Array.from(new Set(data.map(f => f.lesion)));
-
-  const filteredFotos = data.filter(foto => {
-    if (lesionFilter !== 'todas' && foto.lesion !== lesionFilter) return false;
-    if (isReal) {
-      if (activeFilter === 'cambios') return foto.estado === 'Cambios reportados';
-      if (activeFilter === 'estables') return foto.estado === 'Sin cambios' || foto.estado === 'Registro inicial';
-      return true;
-    }
-    if (activeFilter === 'dermatoscopia') return foto.tipo.includes('Dermatoscopía');
-    if (activeFilter === 'macro') return foto.tipo.includes('Macro') || foto.tipo.includes('Panorámica');
-    return true;
-  });
+  const filteredFotos = data;
 
   const handleOpenModal = (foto: RegistroFoto) => {
     setSelectedFoto(foto);
     setModalZoom(1);
     setModalPolarized(globalPolarized);
-    setModalReticle(globalReticle);
+    setModalFilter('original');
     setModalHeatmap(globalHeatmap);
     setModalRoiContour(globalRoiContour);
     setModalAsymmetryGuide(false);
@@ -280,6 +421,19 @@ export default function GaleriaImagenes4Col({
                 <SplitSquareVertical className="h-3.5 w-3.5 text-slate-500" />
                 <span>Comparar</span>
               </button>
+              {isReal && (
+              <button
+                onClick={() => setViewMode('secuencia')}
+                className={`px-3 py-1 rounded-md flex items-center gap-1.5 transition-colors ${
+                  viewMode === 'secuencia'
+                    ? 'bg-white text-slate-900 shadow-xs font-semibold'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ArrowRightLeft className="h-3.5 w-3.5 text-slate-500" />
+                <span>Día a día</span>
+              </button>
+              )}
               <button
                 onClick={() => setViewMode('calendar')}
                 className={`px-3 py-1 rounded-md flex items-center gap-1.5 transition-colors ${
@@ -306,142 +460,6 @@ export default function GaleriaImagenes4Col({
           </div>
         </div>
 
-        {/* Lower Tier: Filter tabs + Optical controls cleanly organized */}
-        <div className="px-4 py-2.5 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          {/* Left: Category Filters */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-slate-500 text-xs font-medium mr-1">Filtrar:</span>
-            <button
-              onClick={() => setActiveFilter('todos')}
-              className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                activeFilter === 'todos'
-                  ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              Todas ({data.length})
-            </button>
-            {isReal ? (
-              <>
-                <button
-                  onClick={() => setActiveFilter('cambios')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                    activeFilter === 'cambios'
-                      ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Con cambios ({data.filter(f => f.estado === 'Cambios reportados').length})
-                </button>
-                <button
-                  onClick={() => setActiveFilter('estables')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                    activeFilter === 'estables'
-                      ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Estables ({data.filter(f => f.estado === 'Sin cambios' || f.estado === 'Registro inicial').length})
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setActiveFilter('dermatoscopia')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                    activeFilter === 'dermatoscopia'
-                      ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Dermatoscopía ({data.filter(f => f.tipo.includes('Dermatoscopía')).length})
-                </button>
-                <button
-                  onClick={() => setActiveFilter('macro')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
-                    activeFilter === 'macro'
-                      ? 'bg-white text-slate-900 border border-slate-300 shadow-2xs font-semibold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                >
-                  Topografía ({data.filter(f => f.tipo.includes('Macro') || f.tipo.includes('Panorámica')).length})
-                </button>
-              </>
-            )}
-
-            {lesionesDisponibles.length > 1 && (
-              <select
-                value={lesionFilter}
-                onChange={(e) => setLesionFilter(e.target.value)}
-                className="text-xs bg-white border border-slate-200 rounded-md px-2 py-1 font-medium text-slate-800 outline-none focus:border-slate-400 ml-1"
-              >
-                <option value="todas">Lesión: Todas</option>
-                {lesionesDisponibles.map(l => (
-                  <option key={l} value={l}>{l}</option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          {/* Right: Optical Layer Toggles */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-slate-500 text-xs font-medium mr-1 flex items-center gap-1">
-              <Sliders className="h-3 w-3 text-slate-400" /> Modos Ópticos:
-            </span>
-
-            {!isReal && (
-            <>
-            <button
-              onClick={() => setGlobalPolarized(!globalPolarized)}
-              className={`px-2.5 py-1 rounded-md font-medium border flex items-center gap-1.5 transition-colors ${
-                globalPolarized
-                  ? 'bg-slate-900 text-white border-slate-900'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Zap className="h-3 w-3" />
-              <span>Polarizada</span>
-            </button>
-
-            <button
-              onClick={() => setGlobalRoiContour(!globalRoiContour)}
-              className={`px-2.5 py-1 rounded-md font-medium border flex items-center gap-1.5 transition-colors ${
-                globalRoiContour
-                  ? 'bg-teal-50 text-teal-800 border-teal-300'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Layers className="h-3 w-3 text-teal-600" />
-              <span>Contorno IA</span>
-            </button>
-
-            <button
-              onClick={() => setGlobalHeatmap(!globalHeatmap)}
-              className={`px-2.5 py-1 rounded-md font-medium border flex items-center gap-1.5 transition-colors ${
-                globalHeatmap
-                  ? 'bg-amber-50 text-amber-900 border-amber-300'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Flame className="h-3 w-3 text-amber-600" />
-              <span>Densidad</span>
-            </button>
-            </>
-            )}
-
-            <button
-              onClick={() => setGlobalReticle(!globalReticle)}
-              className={`px-2.5 py-1 rounded-md font-medium border flex items-center gap-1.5 transition-colors ${
-                globalReticle
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-              }`}
-            >
-              <Grid className="h-3 w-3 text-emerald-600" />
-              <span>Retículo mm</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* VIEW 1: Grid of 4 Columns */}
@@ -505,7 +523,6 @@ export default function GaleriaImagenes4Col({
               <div className="relative aspect-square w-full bg-[#110d0a] overflow-hidden flex items-center justify-center p-0">
                 <CaptureVisual
                   foto={foto}
-                  showReticle={globalReticle}
                   showRoiContour={globalRoiContour || foto.tag === 'IA-ROI'}
                   showHeatmap={globalHeatmap}
                   isPolarized={globalPolarized && !foto.tipo.includes('No Polarizada')}
@@ -609,7 +626,6 @@ export default function GaleriaImagenes4Col({
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden border border-slate-800/30 shadow-inner">
                   <CaptureVisual
                     foto={compLeft}
-                    showReticle={globalReticle}
                     showRoiContour={globalRoiContour}
                     showHeatmap={globalHeatmap}
                     isPolarized={globalPolarized}
@@ -681,7 +697,6 @@ export default function GaleriaImagenes4Col({
                 <div className="relative aspect-square w-full rounded-lg overflow-hidden border border-slate-800/30 shadow-inner">
                   <CaptureVisual
                     foto={compRight}
-                    showReticle={globalReticle}
                     showRoiContour={globalRoiContour}
                     showHeatmap={globalHeatmap}
                     isPolarized={globalPolarized}
@@ -774,6 +789,36 @@ export default function GaleriaImagenes4Col({
           </CardContent>
         </Card>
       )}
+
+      {/* VIEW: Secuencia día a día — diffs consecutivos por lesión */}
+      {viewMode === 'secuencia' && (() => {
+        const porLesion = new Map<number, string>();
+        for (const f of data) {
+          if (f.lesionId == null) continue;
+          if (!porLesion.has(f.lesionId)) porLesion.set(f.lesionId, f.lesion);
+        }
+        const ids = [...porLesion.entries()];
+        if (ids.length === 0) {
+          return (
+            <Card className="border-slate-200 shadow-xs bg-white rounded-xl p-10 text-center">
+              <Camera className="h-8 w-8 text-slate-300 mx-auto mb-3" />
+              <p className="text-sm font-medium text-slate-700">Sin lesiones con registros</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Este paciente aún no tiene lesiones con foto basal y seguimientos para comparar.
+              </p>
+            </Card>
+          );
+        }
+        return (
+          <div className="space-y-5">
+            {ids.map(([id, nombre]) => (
+              <React.Fragment key={id}>
+                <LesionSecuenciaDiffs lesionId={id} lesionNombre={nombre} />
+              </React.Fragment>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* VIEW 3: Interactive, Organized Calendar View */}
       {viewMode === 'calendar' && (
@@ -996,7 +1041,6 @@ export default function GaleriaImagenes4Col({
                         <div className="w-16 h-16 rounded-lg bg-[#110d0a] shrink-0 relative overflow-hidden border border-slate-200">
                           <CaptureVisual
                             foto={f}
-                            showReticle={false}
                             showRoiContour={false}
                             showHeatmap={false}
                             isPolarized={true}
@@ -1087,12 +1131,12 @@ export default function GaleriaImagenes4Col({
                 <div className="relative aspect-square w-full rounded-2xl bg-[#110d0a] border border-slate-800 shadow-2xl overflow-hidden">
                   <CaptureVisual
                     foto={selectedFoto}
-                    showReticle={modalReticle}
                     showRoiContour={modalRoiContour || selectedFoto.tag === 'IA-ROI'}
                     showHeatmap={modalHeatmap}
                     isPolarized={modalPolarized}
                     zoom={modalZoom}
                     highlightAsymmetry={modalAsymmetryGuide}
+                    filter={selectedFoto.imageUrl ? modalFilter : undefined}
                   />
 
                   {/* On-screen Zoom Indicator Pill */}
@@ -1132,6 +1176,25 @@ export default function GaleriaImagenes4Col({
                     </div>
                   </div>
 
+                  {selectedFoto.imageUrl && (
+                  <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200">
+                    <span className="text-[11px] font-semibold text-slate-500 mr-1">Preprocesamiento:</span>
+                    {PREPROCESS_FILTERS.map((f) => (
+                      <button
+                        key={f.id}
+                        onClick={() => setModalFilter(f.id)}
+                        className={`px-2 py-1 rounded-md text-[11px] font-medium border transition-colors ${
+                          modalFilter === f.id
+                            ? 'bg-slate-900 text-white border-slate-900'
+                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                  )}
+
                   <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-200">
                     {!isReal && (
                     <button
@@ -1143,14 +1206,6 @@ export default function GaleriaImagenes4Col({
                       <Zap className="h-3 w-3" /> Polarizada
                     </button>
                     )}
-                    <button
-                      onClick={() => setModalReticle(!modalReticle)}
-                      className={`px-2.5 py-1 rounded-md text-xs font-medium border flex items-center gap-1 transition-colors ${
-                        modalReticle ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
-                      }`}
-                    >
-                      <Grid className="h-3 w-3 text-emerald-600" /> Retículo mm
-                    </button>
                     {!isReal && (
                     <>
                     <button

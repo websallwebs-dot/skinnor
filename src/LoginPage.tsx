@@ -2,9 +2,8 @@ import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Activity, ShieldCheck } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
@@ -28,73 +27,75 @@ export default function LoginPage() {
         super_admin: '/admin',
       };
       navigate(roleMap[data.user.rol] || '/dashboard');
-    } catch {
-      toast.error('Credenciales inválidas');
+    } catch (err: any) {
+      toast.error(err?.message || 'No se pudo iniciar sesión');
     } finally {
       setLoggingIn(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f4f6f5] px-4 py-8 font-['Golos_Text']">
-      <Card className="w-full max-w-lg border border-slate-200 shadow-xl shadow-black/5 bg-white rounded-xl">
-        <CardHeader className="space-y-2 items-center pt-8 pb-4">
-          <div className="flex items-center gap-2 font-semibold text-[#0d7a63]">
-            <Activity className="h-8 w-8" />
-            <span className="text-2xl font-bold tracking-tight">Skinnor</span>
+    <div className="flex min-h-screen items-center justify-center bg-[#f4f6f5] px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-[#0d7a63] text-white mb-4">
+            <Activity className="h-5 w-5" strokeWidth={2.2} />
           </div>
-          <CardTitle className="text-xl font-bold text-slate-900">Ecosistema Multi-Tenant Teledermatológico</CardTitle>
-          <CardDescription className="text-center text-slate-500 text-xs">
-            Ingresa con tus credenciales institucionales.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-700" htmlFor="email">
-                Correo Electrónico
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900">Skinnor</h1>
+          <p className="text-sm text-emerald-800/70 mt-1">Teledermatología</p>
+        </div>
+
+        <form
+          onSubmit={handleLogin}
+          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm shadow-black/5"
+        >
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="mb-1.5 block text-xs font-medium text-slate-700">
+                Correo electrónico
               </label>
-              <Input 
-                id="email" 
-                placeholder="tu@email.com" 
-                type="email" 
+              <Input
+                id="email"
+                name="email"
+                autoComplete="username"
+                required
+                type="email"
+                placeholder="nombre@correo.cl"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="border-slate-200 focus-visible:ring-emerald-600 bg-slate-50"
+                onChange={(e) => setEmail(e.target.value)}
+                className="border-slate-200 bg-slate-50 text-sm focus-visible:ring-emerald-600"
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-700" htmlFor="password">
+            <div>
+              <label htmlFor="password" className="mb-1.5 block text-xs font-medium text-slate-700">
                 Contraseña
               </label>
-              <Input 
-                id="password" 
+              <Input
+                id="password"
+                name="password"
+                autoComplete="current-password"
+                required
                 type="password"
+                placeholder="••••••••"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="border-slate-200 focus-visible:ring-emerald-600 bg-slate-50"
+                onChange={(e) => setPassword(e.target.value)}
+                className="border-slate-200 bg-slate-50 text-sm focus-visible:ring-emerald-600"
               />
             </div>
-
-            <Button 
+            <Button
+              type="submit"
               disabled={loggingIn}
-              className="w-full bg-[#0d7a63] hover:bg-[#0a4539] text-white" 
-              onClick={handleLogin}
+              className="w-full bg-[#0d7a63] text-white hover:bg-[#0a4539] h-10 text-sm font-medium"
             >
-              {loggingIn ? 'Ingresando...' : 'Ingresar al Sistema'}
+              {loggingIn ? 'Ingresando…' : 'Ingresar'}
             </Button>
           </div>
-        </CardContent>
+        </form>
 
-        <CardFooter className="flex flex-col gap-3 text-center pb-6 border-t border-slate-100 pt-4">
-          <p className="text-xs text-slate-500">
-            Plataforma con certificación HIPAA y cumplimiento Ley N° 20.584.
-          </p>
-          <Button variant="link" className="text-[#0d7a63] text-xs h-auto p-0" onClick={() => navigate('/')}>
-            ← Volver a la página principal
-          </Button>
-        </CardFooter>
-      </Card>
+        <p className="mt-6 text-center text-[11px] text-slate-400">
+          Acceso restringido a personal autorizado.
+        </p>
+      </div>
     </div>
   );
 }

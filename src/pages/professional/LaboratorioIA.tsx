@@ -50,18 +50,26 @@ function respuestaMock(prompt: string): MockResponse {
 }
 
 export default function LaboratorioIA({ capturas }: { capturas: RegistroFoto[] }) {
-  const imagenes = useMemo<ImagenLab[]>(
-    () =>
-      capturas
-        .filter((c) => c.imageUrl)
-        .map((c) => ({
-          id: c.id,
-          imageUrl: c.imageUrl as string,
-          label: c.tag,
-          detalle: `${c.lesion} • ${c.fecha}`,
-        })),
+  const [lesionFilter, setLesionFilter] = useState<string>('todas');
+
+  const lesionesDisponibles = useMemo(
+    () => Array.from(new Set(capturas.map((c) => c.lesion))).sort(),
     [capturas]
   );
+
+  const imagenes = useMemo<ImagenLab[]>(() => {
+    const lista = lesionFilter === 'todas'
+      ? capturas
+      : capturas.filter((c) => c.lesion === lesionFilter);
+    return lista
+      .filter((c) => c.imageUrl)
+      .map((c) => ({
+        id: c.id,
+        imageUrl: c.imageUrl as string,
+        label: c.tag,
+        detalle: `${c.lesion} • ${c.fecha}`,
+      }));
+  }, [capturas, lesionFilter]);
 
   const [imagenSel, setImagenSel] = useState<ImagenLab | null>(null);
   const [prompt, setPrompt] = useState('');
@@ -103,6 +111,23 @@ export default function LaboratorioIA({ capturas }: { capturas: RegistroFoto[] }
           <label className="text-xs font-semibold text-[#5f7b6f] uppercase tracking-wide flex items-center gap-1.5">
             <ImageIcon className="h-3.5 w-3.5" /> 1. Elige una imagen del paciente
           </label>
+          {lesionesDisponibles.length > 1 && (
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-[#5f7b6f] font-medium">Lesión:</span>
+              <select
+                value={lesionFilter}
+                onChange={(e) => { setLesionFilter(e.target.value); setImagenSel(null); setRespuesta(null); }}
+                className="text-xs bg-white border border-[#d8e0dc] rounded-md px-2 py-1.5 font-medium text-[#0c1512] outline-none focus:border-[#0d7a63] max-w-xs"
+              >
+                <option value="todas">Todas ({capturas.filter(c => c.imageUrl).length})</option>
+                {lesionesDisponibles.map((l) => (
+                  <option key={l} value={l}>
+                    {l} ({capturas.filter(c => c.imageUrl && c.lesion === l).length})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           {imagenes.length === 0 ? (
             <p className="text-sm text-[#5f7b6f]">Este paciente no tiene imágenes registradas.</p>
           ) : (
@@ -118,14 +143,25 @@ export default function LaboratorioIA({ capturas }: { capturas: RegistroFoto[] }
                   }`}
                   title={img.detalle}
                 >
-                  <img src={img.imageUrl} alt={img.label} className="w-full aspect-square object-cover bg-[#f4f6f5]" loading="lazy" />
+                  <img
+                    src={img.imageUrl}
+                    alt={img.label}
+                    className="w-full aspect-square object-contain bg-[#f4f6f5]"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
                 </button>
               ))}
             </div>
           )}
           {imagenSel && (
             <div className="flex items-center gap-3 rounded-lg border border-[#d8e0dc] bg-[#fafcfa] p-3">
-              <img src={imagenSel.imageUrl} alt="Seleccionada" className="w-14 h-14 rounded-md object-cover border border-[#d8e0dc]" />
+              <img
+                src={imagenSel.imageUrl}
+                alt="Seleccionada"
+                className="w-14 h-14 rounded-md object-contain bg-[#f4f6f5] border border-[#d8e0dc]"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
               <div className="text-xs">
                 <div className="font-medium text-[#0c1512]">{imagenSel.detalle}</div>
                 <div className="text-[#5f7b6f]">Captura {imagenSel.label}</div>

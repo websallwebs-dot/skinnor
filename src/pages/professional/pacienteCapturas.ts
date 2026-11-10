@@ -77,6 +77,7 @@ export function buildCapturasFromPatient(
     const baseFecha = fmtFecha(lesion.creado_en);
     capturas.push({
       id: `LES-${lesion.id}-BASE`,
+      lesionId: lesion.id,
       tag: 'BASE',
       fecha: baseFecha.fecha,
       fullDate: baseFecha.fullDate,
@@ -116,6 +117,7 @@ export function buildCapturasFromPatient(
         const esFallback = f.id === 0 && !(seg.foto_count ?? 0);
         capturas.push({
           id: `SEG-${seg.id}-F${f.id || fotoIdx}`,
+          lesionId: lesion.id,
           tag: fotos.length > 1 ? `${tag}.${fotoIdx + 1}` : tag,
           fecha: fFecha.fecha,
           fullDate: fFecha.fullDate,

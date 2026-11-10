@@ -4,6 +4,7 @@ import { AuthProvider, useAuth, type UserRole } from './AuthContext';
 import { Toaster } from 'sonner';
 import LandingPage from './LandingPage';
 import LoginPage from './LoginPage';
+import RegisterPage from './RegisterPage';
 
 // ─── DASHBOARD MODULES ────────────────────────────────────────────────────────
 import {
@@ -19,14 +20,16 @@ import {
 } from './dashboards';
 
 // Componente para proteger las rutas
-const ROLE_HOME: Record<UserRole, string> = {
+const ROLE_HOME: Record<string, string> = {
   patient: '/dashboard',
+  paciente: '/dashboard',
   professional: '/pro',
+  profesional: '/pro',
   clinic_admin: '/clinic',
   super_admin: '/admin',
 };
 
-function ProtectedRoute({ children, roles }: { children: ReactNode; roles?: UserRole[] }) {
+function ProtectedRoute({ children, roles }: { children: ReactNode; roles?: string[] }) {
   const { user } = useAuth();
 
   if (!user) {
@@ -46,12 +49,13 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           
           {/* 1. Patient Portal Dashboard */}
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute roles={['patient']}>
+              <ProtectedRoute roles={['patient', 'paciente']}>
                 <PatientLayout />
               </ProtectedRoute>
             } 
@@ -70,7 +74,7 @@ export default function App() {
           <Route 
             path="/pro" 
             element={
-              <ProtectedRoute roles={['professional']}>
+              <ProtectedRoute roles={['professional', 'profesional']}>
                 <ProfessionalLayout />
               </ProtectedRoute>
             } 

@@ -1,4 +1,4 @@
-import { run as dbRun, exec as dbExec, get as dbGet, all as dbAll } from './db';
+import { run as dbRun, exec as dbExec, get as dbGet } from './db';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -145,142 +145,21 @@ export async function seed() {
   const selectUserSql = 'SELECT id FROM usuarios WHERE email = ?';
 
   const users = [
-    { email: 'sofia.valenzuela@gmail.com', hash, nombre: 'Sofía Valenzuela', rol: 'paciente', tenantId: orgIds[0] },
-    { email: 'd.munoz@clinicasantamaria.cl', hash, nombre: 'Dr. Diego Muñoz', rol: 'profesional', tenantId: orgIds[0] },
     { email: 'admin@clinicasantamaria.cl', hash, nombre: 'Dra. Marcela Lagos', rol: 'clinic_admin', tenantId: orgIds[0] },
     { email: 'admin.platform@skinnor.io', hash, nombre: 'Ing. Carlos Mendoza', rol: 'super_admin', tenantId: null },
   ];
 
-  const userIds: number[] = [];
   for (const u of users) {
-    const id = getOrInsert(
+    getOrInsert(
       insertUserSql,
       [u.email, u.hash, u.nombre, u.rol, u.tenantId],
       selectUserSql,
       [u.email]
     );
-    userIds.push(id);
   }
 
-  let pacienteSofiaId = 0;
-  if (userIds[0] && userIds[0] > 0) {
-    const insertPacienteSql = `
-      INSERT INTO pacientes (usuario_id, fecha_nacimiento, sexo, telefono)
-      VALUES (?, '1990-05-15', 'Femenino', '+56 9 1234 5678')
-    `;
-    const selectPacienteSql = 'SELECT id FROM pacientes WHERE usuario_id = ?';
-    pacienteSofiaId = getOrInsert(
-      insertPacienteSql,
-      [userIds[0]],
-      selectPacienteSql,
-      [userIds[0]]
-    );
-  }
-
-  if (pacienteSofiaId && userIds[1] && userIds[1] > 0) {
-    const insertVinculacionSql = `
-      INSERT INTO vinculaciones (paciente_id, profesional_id, codigo_acceso_id)
-      VALUES (?, ?, NULL)
-    `;
-    const selectVinculacionSql = 'SELECT id FROM vinculaciones WHERE paciente_id = ? AND profesional_id = ?';
-    getOrInsert(
-      insertVinculacionSql,
-      [pacienteSofiaId, userIds[1]],
-      selectVinculacionSql,
-      [pacienteSofiaId, userIds[1]]
-    );
-  }
-
-  // Datos demo: conectar todos los pacientes existentes con el especialista
-  // y asegurar lesión con fotos + consulta para cada uno (idempotente)
-  const profesionalDemo = dbGet(
-    "SELECT id FROM usuarios WHERE email = 'd.munoz@clinicasantamaria.cl'"
-  ) as { id: number } | undefined;
-  const profesionalDemoId = profesionalDemo?.id ?? userIds[1];
-
-  if (profesionalDemoId) {
-    const hamDir = path.resolve(__dirname, '../data/ham10000/HAM10000_images_part_1');
-    const loadHamImage = (idx: number): Buffer | null => {
-      try {
-        const files = fs.readdirSync(hamDir).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
-        if (!files.length) return null;
-        return fs.readFileSync(path.join(hamDir, files[idx % files.length]));
-      } catch {
-        return null;
-      }
-    };
-
-    const pacientesRows = dbAll('SELECT id, usuario_id FROM pacientes') as { id: number; usuario_id: number }[];
-
-    // Vincular cualquier paciente sin vínculo con el especialista demo
-    for (const p of pacientesRows) {
-      const existe = dbGet('SELECT id FROM vinculaciones WHERE paciente_id = ? AND profesional_id = ?', [p.id, profesionalDemoId]);
-      if (!existe) {
-        dbRun('INSERT INTO vinculaciones (paciente_id, profesional_id, codigo_acceso_id) VALUES (?, ?, NULL)', [p.id, profesionalDemoId]);
-      }
-    }
-
-    for (const p of pacientesRows) {
-      // Lesión demo (por nombre, idempotente)
-      let lesionRow = dbGet(`SELECT id FROM lesiones WHERE paciente_id = ? AND nombre = 'Nevo en hombro derecho'`, [p.id]) as { id: number } | undefined;
-      let lesionId = lesionRow?.id;
-      const fotoLesion = loadHamImage(0);
-      if (!lesionId && fotoLesion) {
-        const r = dbRun(
-          `INSERT INTO lesiones (paciente_id, nombre, zona, ubicacion, tamaño, colores, sintomas, creado_en, foto_base)
-           VALUES (?, 'Nevo en hombro derecho', 'brazo_der', 'Hombro derecho', '~6 mm', ?, ?, ?, ?)`,
-          [p.id, JSON.stringify(['Marrón', 'Negro']), JSON.stringify(['Picazón ocasional']),
-           new Date(Date.now() - 45 * 86400000).toISOString(), fotoLesion]
-        );
-        lesionId = r.lastInsertRowid as number;
-      }
-
-      if (lesionId) {
-        const segCount = ((dbGet('SELECT COUNT(*) AS c FROM seguimientos WHERE lesion_id = ?', [lesionId]) as { c: number } | undefined)?.c) || 0;
-        if (segCount === 0) {
-          const segs = [
-            { daysAgo: 30, cambios: 'no', color: 'no', sintomas: 'no', notas: 'Primera fotografía de referencia.', imgs: [1] },
-            { daysAgo: 14, cambios: 'si', color: 'no', sintomas: 'si', notas: 'Ligero aumento de picazón reportado por la paciente.', imgs: [2, 3] },
-            { daysAgo: 2, cambios: 'no', color: 'no', sintomas: 'no', notas: 'Sin cambios visuales respecto al control anterior.', imgs: [4] },
-          ];
-          for (const s of segs) {
-            const f1 = loadHamImage(s.imgs[0]);
-            if (!f1) continue;
-            const sr = dbRun(
-              `INSERT INTO seguimientos (lesion_id, fecha, cambios, color, sintomas, notas, foto)
-               VALUES (?, ?, ?, ?, ?, ?, ?)`,
-              [lesionId, new Date(Date.now() - s.daysAgo * 86400000).toISOString(), s.cambios, s.color, s.sintomas, s.notas, f1]
-            );
-            const segId = sr.lastInsertRowid as number;
-            s.imgs.forEach((imgIdx, i) => {
-              const buf = loadHamImage(imgIdx);
-              if (buf) {
-                dbRun('INSERT INTO seguimiento_fotos (seguimiento_id, foto, mime, orden) VALUES (?, ?, ?, ?)', [segId, buf, 'image/jpeg', i]);
-              }
-            });
-          }
-        }
-      }
-
-      // Consulta demo paciente ↔ especialista
-      const consultaRow = dbGet('SELECT id FROM consultas WHERE paciente_id = ? AND profesional_id = ? LIMIT 1', [p.id, profesionalDemoId]) as { id: number } | undefined;
-      if (!consultaRow) {
-        const cr = dbRun(
-          `INSERT INTO consultas (paciente_id, profesional_id, tema, estado) VALUES (?, ?, 'Control de nevo en hombro derecho', 'pendiente')`,
-          [p.id, profesionalDemoId]
-        );
-        const cid = cr.lastInsertRowid as number;
-        dbRun(
-          `INSERT INTO mensajes_consulta (consulta_id, remitente_id, remitente_tipo, contenido) VALUES (?, ?, 'paciente', ?)`,
-          [cid, p.usuario_id, 'Doctor, he estado registrando fotos del lunar cada 15 días. ¿Puede revisarlas cuando pueda? Gracias.']
-        );
-        dbRun(
-          `INSERT INTO mensajes_consulta (consulta_id, remitente_id, remitente_tipo, contenido) VALUES (?, ?, 'profesional', ?)`,
-          [cid, profesionalDemoId, 'Hola, con gusto reviso tu historial. Por ahora las imágenes se ven estables; sigue con los controles semanales.']
-        );
-      }
-    }
-  }
+  // Los datos clinicos demo ya no se re-siembran: los pacientes y profesionales
+  // se gestionan por la app (registro funcional + vinculaciones manuales).
 
   const insertProtocoloSql = `
     INSERT INTO protocolos_clinicos (
