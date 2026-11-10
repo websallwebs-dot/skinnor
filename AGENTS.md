@@ -5,9 +5,9 @@ correr en paralelo:
 
 | Servicio | Tecnología | Puerto | Comando |
 |---|---|---|---|
-| Frontend | React + Vite + TS | 3000 | `npm run dev` |
+| Frontend | React + Vite + TS | **3005** | `npm run dev -- --port 3005 --host 0.0.0.0` |
 | Backend API | Express + TS (tsx) + SQLite | 4000 | `npm run server` |
-| Análisis IA | FastAPI + OpenCV + TensorFlow | 8003 | `uvicorn main:app --port 8003` |
+| Análisis IA | FastAPI + OpenCV + TensorFlow | **8080** | `uvicorn main:app --port 8080` |
 
 O `npm run dev:full` levanta frontend + backend juntos.
 
@@ -57,21 +57,22 @@ si la BD falta, pero NO siembra datos demo.
 ## 4. Levantar los 3 servicios
 
 ```bash
-npm run dev:full                                        # frontend :3000 + API :4000
-.venv-python/Scripts/python -m uvicorn main:app --port 8003   # análisis IA
+.venv-python/Scripts/uvicorn main:app --port 8080       # análisis IA :8080
+npm run dev -- --port 3005 --host 0.0.0.0                    # frontend :3005
+npm run server                                              # API :4000
 ```
 
 Verificación:
 
 - `curl http://localhost:4000/api/health` (o la ruta de health del server)
-- `curl http://127.0.0.1:8003/health` → `{"status":"online","model":"google/derm-foundation"}`
+- `curl http://127.0.0.1:8080/health` → `{"status":"online","model":"google/derm-foundation"}`
   (la primera carga del modelo tarda varios minutos)
-- Abrir `http://localhost:3000` → landing → login con las credenciales demo.
+- Abrir `http://localhost:3005` → landing → login con las credenciales demo.
 
 ## 5. Notas
 
 - El análisis de evolución (`/api/lesiones/:id/evolucion/analisis`) y la
-  búsqueda de casos similares requieren el servicio FastAPI en :8003 y
+  búsqueda de casos similares requieren el servicio FastAPI en :8080 y
   Pinecone configurado respectivamente; sin ellos la UI lo indica.
 - `data/` (dataset HAM10000 completo) está en `.gitignore` — no se commitea.
 - Credenciales reales de Pinecone/JWT nunca se commitean; usar `.env`.
